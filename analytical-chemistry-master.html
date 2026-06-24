@@ -1,0 +1,2070 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Analytical Chemistry Master</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
+
+<style>
+/* ════════════════════════════════════════════
+   ROOT TOKENS
+════════════════════════════════════════════ */
+:root {
+  --navy:      #0B1929;
+  --navy-mid:  #1A2E45;
+  --navy-soft: #1E3A52;
+  --teal:      #0EA5E9;
+  --teal-dark: #0284C7;
+  --teal-glow: rgba(14,165,233,0.15);
+  --cobalt:    #2563EB;
+  --cobalt-bg: #EFF6FF;
+  --emerald:   #10B981;
+  --emerald-bg:#ECFDF5;
+  --rose:      #F43F5E;
+  --rose-bg:   #FFF1F2;
+  --amber:     #F59E0B;
+  --amber-bg:  #FFFBEB;
+  --violet:    #8B5CF6;
+  --violet-bg: #F5F3FF;
+  --white:     #FFFFFF;
+  --slate-50:  #F8FAFC;
+  --slate-100: #F1F5F9;
+  --slate-200: #E2E8F0;
+  --slate-300: #CBD5E1;
+  --slate-400: #94A3B8;
+  --slate-500: #64748B;
+  --slate-600: #475569;
+  --slate-700: #334155;
+  --slate-800: #1E293B;
+  --slate-900: #0F172A;
+  --shadow-sm: 0 1px 3px rgba(11,25,41,0.08), 0 1px 2px rgba(11,25,41,0.06);
+  --shadow:    0 4px 16px rgba(11,25,41,0.10), 0 2px 6px rgba(11,25,41,0.06);
+  --shadow-lg: 0 12px 32px rgba(11,25,41,0.14), 0 4px 12px rgba(11,25,41,0.08);
+  --shadow-xl: 0 24px 48px rgba(11,25,41,0.18), 0 8px 20px rgba(11,25,41,0.10);
+  --radius-sm: 8px;
+  --radius:    12px;
+  --radius-lg: 18px;
+  --radius-xl: 24px;
+  --transition: 0.22s cubic-bezier(0.4,0,0.2,1);
+}
+
+/* ════════════════════════════════════════════
+   RESET & BASE
+════════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--slate-50);
+  color: var(--slate-800);
+  min-height: 100vh;
+  overflow-x: hidden;
+  line-height: 1.6;
+}
+button { font-family: inherit; cursor: pointer; border: none; background: none; }
+input { font-family: inherit; }
+a { text-decoration: none; color: inherit; }
+
+/* ════════════════════════════════════════════
+   LOADING SCREEN
+════════════════════════════════════════════ */
+#loading-screen {
+  position: fixed; inset: 0; z-index: 9999;
+  background: linear-gradient(145deg, var(--navy) 0%, var(--navy-mid) 50%, #0A2440 100%);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 0;
+  transition: opacity 0.6s ease, visibility 0.6s ease;
+}
+#loading-screen.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+
+.loader-molecule {
+  position: relative; width: 120px; height: 120px; margin-bottom: 32px;
+}
+.molecule-nucleus {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+  width: 28px; height: 28px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--teal), var(--cobalt));
+  box-shadow: 0 0 20px rgba(14,165,233,0.6), 0 0 40px rgba(14,165,233,0.3);
+  animation: nucleusPulse 2s ease-in-out infinite;
+}
+@keyframes nucleusPulse {
+  0%,100% { transform: translate(-50%,-50%) scale(1); box-shadow: 0 0 20px rgba(14,165,233,0.6),0 0 40px rgba(14,165,233,0.3); }
+  50%      { transform: translate(-50%,-50%) scale(1.12); box-shadow: 0 0 30px rgba(14,165,233,0.8),0 0 60px rgba(14,165,233,0.4); }
+}
+.orbit-ring {
+  position: absolute; top: 50%; left: 50%;
+  border: 1.5px solid rgba(14,165,233,0.25);
+  border-radius: 50%; transform-origin: 0 0;
+}
+.orbit-1 { width: 72px; height: 72px; margin: -36px 0 0 -36px; animation: spin1 2.4s linear infinite; }
+.orbit-2 { width: 100px; height: 40px; margin: -20px 0 0 -50px; animation: spin2 3.2s linear infinite; border-color: rgba(37,99,235,0.25); }
+.orbit-3 { width: 116px; height: 56px; margin: -28px 0 0 -58px; animation: spin3 4s linear infinite; border-color: rgba(139,92,246,0.2); }
+@keyframes spin1 { to { transform: rotate(360deg); } }
+@keyframes spin2 { to { transform: rotate(-360deg) rotateX(60deg); } }
+@keyframes spin3 { to { transform: rotate(360deg) rotateY(45deg); } }
+
+.orbit-electron {
+  position: absolute; width: 8px; height: 8px;
+  border-radius: 50%; top: -4px; left: 50%; margin-left: -4px;
+  box-shadow: 0 0 8px currentColor;
+}
+.orbit-1 .orbit-electron { background: var(--teal); color: var(--teal); }
+.orbit-2 .orbit-electron { background: var(--cobalt); color: var(--cobalt); }
+.orbit-3 .orbit-electron { background: var(--violet); color: var(--violet); }
+
+.loader-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1.75rem; font-weight: 700; color: var(--white);
+  letter-spacing: -0.02em; margin-bottom: 6px; text-align: center;
+}
+.loader-subtitle {
+  font-size: 0.85rem; color: rgba(255,255,255,0.5);
+  letter-spacing: 0.12em; text-transform: uppercase;
+  margin-bottom: 40px; text-align: center;
+}
+.loader-progress-wrap { width: 280px; margin-bottom: 20px; }
+.loader-progress-bar {
+  height: 3px; background: rgba(255,255,255,0.1); border-radius: 2px; overflow: hidden;
+}
+.loader-progress-fill {
+  height: 100%; width: 0%; border-radius: 2px;
+  background: linear-gradient(90deg, var(--teal), var(--cobalt));
+  transition: width 0.4s ease;
+  box-shadow: 0 0 8px var(--teal);
+}
+.loader-quote {
+  font-size: 0.82rem; color: rgba(255,255,255,0.4);
+  text-align: center; max-width: 320px;
+  font-style: italic; min-height: 36px;
+  transition: opacity 0.4s ease;
+}
+.loader-pct {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem; color: var(--teal);
+  text-align: right; margin-top: 6px;
+}
+
+/* ════════════════════════════════════════════
+   MAIN APP LAYOUT
+════════════════════════════════════════════ */
+#app { display: none; min-height: 100vh; }
+#app.visible { display: flex; flex-direction: column; animation: appFadeIn 0.5s ease; }
+@keyframes appFadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+/* ── TOP NAV ── */
+.topnav {
+  height: 64px; background: var(--white);
+  border-bottom: 1px solid var(--slate-200);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 24px; position: sticky; top: 0; z-index: 100;
+  box-shadow: var(--shadow-sm);
+}
+.nav-brand { display: flex; align-items: center; gap: 10px; }
+.nav-brand-icon {
+  width: 36px; height: 36px; border-radius: 10px;
+  background: white;
+  border: 1.5px solid var(--slate-200);
+  display: flex; align-items: center; justify-content: center;
+  position: relative; overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+.nav-brand-icon svg { width: 20px; height: 20px; }
+.brand-name {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1.05rem; font-weight: 700; color: var(--navy);
+  letter-spacing: -0.01em;
+}
+.brand-name span { color: var(--teal); }
+
+.nav-center { flex: 1; max-width: 360px; margin: 0 auto; padding: 0 24px; }
+.search-wrap {
+  position: relative;
+}
+.search-wrap svg {
+  position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
+  width: 16px; height: 16px; color: var(--slate-400);
+}
+.search-input {
+  width: 100%; padding: 8px 12px 8px 36px;
+  border: 1.5px solid var(--slate-200); border-radius: 30px;
+  background: var(--slate-50); font-size: 0.85rem; color: var(--slate-700);
+  transition: all var(--transition); outline: none;
+}
+.search-input:focus { border-color: var(--teal); background: var(--white); box-shadow: 0 0 0 3px var(--teal-glow); }
+.search-input::placeholder { color: var(--slate-400); }
+
+.nav-right { display: flex; align-items: center; gap: 12px; }
+.nav-sound-btn {
+  width: 36px; height: 36px; border-radius: 8px;
+  border: 1.5px solid var(--slate-200); background: var(--white);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--slate-500); transition: all var(--transition); cursor: pointer;
+}
+.nav-sound-btn:hover { border-color: var(--teal); color: var(--teal); }
+.nav-sound-btn.active { background: var(--teal-glow); border-color: var(--teal); color: var(--teal); }
+.dinglo-logo { height: 28px; }
+.dinglo-img { height: 28px; width: auto; border-radius: 4px; }
+
+/* ── PAGE WRAPPER ── */
+.page-wrap { flex: 1; padding: 28px 24px 80px; max-width: 1200px; margin: 0 auto; width: 100%; }
+
+/* ════════════════════════════════════════════
+   SCREEN MANAGEMENT
+════════════════════════════════════════════ */
+.screen { display: none; animation: screenIn 0.3s ease; }
+.screen.active { display: block; }
+@keyframes screenIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+/* ════════════════════════════════════════════
+   DASHBOARD SCREEN
+════════════════════════════════════════════ */
+
+/* ── WELCOME BANNER ── */
+.welcome-banner {
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navy-soft) 60%, #1a3a5c 100%);
+  border-radius: var(--radius-xl); padding: 32px 36px;
+  position: relative; overflow: hidden; margin-bottom: 28px;
+  box-shadow: var(--shadow-lg);
+}
+.welcome-banner::before {
+  content: ''; position: absolute; right: -40px; top: -40px;
+  width: 240px; height: 240px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(14,165,233,0.12) 0%, transparent 70%);
+}
+.welcome-banner::after {
+  content: ''; position: absolute; right: 60px; bottom: -60px;
+  width: 180px; height: 180px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(37,99,235,0.1) 0%, transparent 70%);
+}
+.welcome-banner-content { position: relative; z-index: 1; }
+.welcome-eyebrow {
+  font-size: 0.72rem; font-weight: 600; color: rgba(14,165,233,0.9);
+  letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 8px;
+}
+.welcome-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1.6rem; font-weight: 700; color: var(--white);
+  letter-spacing: -0.02em; line-height: 1.2; margin-bottom: 10px;
+}
+.welcome-sub { font-size: 0.9rem; color: rgba(255,255,255,0.55); margin-bottom: 24px; max-width: 480px; }
+.welcome-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+
+.banner-molecule-bg {
+  position: absolute; right: 24px; top: 50%; transform: translateY(-50%);
+  opacity: 0.06; pointer-events: none;
+}
+.banner-molecule-bg svg { width: 160px; height: 160px; }
+
+/* ── STATS GRID ── */
+.stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 28px; }
+.stat-card {
+  background: var(--white); border: 1px solid var(--slate-200);
+  border-radius: var(--radius-lg); padding: 20px 22px;
+  box-shadow: var(--shadow-sm); transition: all var(--transition);
+  position: relative; overflow: hidden;
+}
+.stat-card:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+.stat-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0;
+  height: 3px; border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+}
+.stat-card.teal::before  { background: var(--teal); }
+.stat-card.cobalt::before { background: var(--cobalt); }
+.stat-card.emerald::before { background: var(--emerald); }
+.stat-card.amber::before { background: var(--amber); }
+
+.stat-icon-wrap {
+  width: 38px; height: 38px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 14px;
+}
+.stat-icon-wrap.teal   { background: rgba(14,165,233,0.1); color: var(--teal); }
+.stat-icon-wrap.cobalt { background: rgba(37,99,235,0.1);  color: var(--cobalt); }
+.stat-icon-wrap.emerald{ background: rgba(16,185,129,0.1); color: var(--emerald); }
+.stat-icon-wrap.amber  { background: rgba(245,158,11,0.1); color: var(--amber); }
+.stat-icon-wrap svg { width: 20px; height: 20px; }
+.stat-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1.7rem; font-weight: 600; color: var(--navy);
+  line-height: 1; margin-bottom: 4px;
+}
+.stat-label { font-size: 0.78rem; color: var(--slate-500); font-weight: 500; }
+
+/* ── SECTION HEADERS ── */
+.section-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 18px;
+}
+.section-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1.1rem; font-weight: 700; color: var(--navy); letter-spacing: -0.01em;
+}
+.section-sub { font-size: 0.8rem; color: var(--slate-400); margin-top: 2px; }
+.view-all-btn {
+  font-size: 0.8rem; font-weight: 600; color: var(--teal);
+  cursor: pointer; transition: color var(--transition);
+}
+.view-all-btn:hover { color: var(--teal-dark); }
+
+/* ── DAILY CHALLENGE ── */
+.daily-challenge {
+  background: linear-gradient(135deg, #EFF6FF 0%, #F0FDF4 100%);
+  border: 1.5px solid var(--cobalt-bg); border-radius: var(--radius-lg);
+  padding: 20px 24px; margin-bottom: 28px; display: flex; align-items: center; gap: 20px;
+  cursor: pointer; transition: all var(--transition);
+}
+.daily-challenge:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+.daily-badge {
+  width: 52px; height: 52px; border-radius: 14px; flex-shrink: 0;
+  background: linear-gradient(135deg, var(--cobalt), var(--teal));
+  display: flex; align-items: center; justify-content: center; font-size: 1.5rem;
+  box-shadow: 0 4px 12px rgba(37,99,235,0.25);
+}
+.daily-content { flex: 1; }
+.daily-label { font-size: 0.7rem; font-weight: 700; color: var(--cobalt); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 4px; }
+.daily-title { font-family: 'Space Grotesk', sans-serif; font-size: 1rem; font-weight: 600; color: var(--navy); }
+.daily-meta { font-size: 0.78rem; color: var(--slate-500); margin-top: 3px; }
+.daily-arrow { color: var(--cobalt); flex-shrink: 0; }
+.daily-arrow svg { width: 20px; height: 20px; }
+
+/* ── TOPIC CATEGORIES GRID ── */
+.categories-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 28px; }
+.category-card {
+  background: var(--white); border: 1px solid var(--slate-200);
+  border-radius: var(--radius-lg); padding: 22px; cursor: pointer;
+  transition: all var(--transition); box-shadow: var(--shadow-sm); position: relative; overflow: hidden;
+}
+.category-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); border-color: transparent; }
+.category-card::after {
+  content: ''; position: absolute; inset: 0; border-radius: var(--radius-lg);
+  opacity: 0; transition: opacity var(--transition);
+}
+.category-card:hover::after { opacity: 1; }
+
+.cc-fundamentals .category-card:hover { border-color: var(--teal); }
+.cc-classical    .category-card:hover { border-color: var(--cobalt); }
+.cc-spectroscopy .category-card:hover { border-color: var(--violet); }
+.cc-electro      .category-card:hover { border-color: var(--emerald); }
+.cc-separation   .category-card:hover { border-color: var(--amber); }
+.cc-advanced     .category-card:hover { border-color: var(--rose); }
+
+.cat-icon-wrap {
+  width: 46px; height: 46px; border-radius: 13px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.4rem; margin-bottom: 14px;
+}
+.cat-icon-teal   { background: rgba(14,165,233,0.1); }
+.cat-icon-cobalt { background: rgba(37,99,235,0.1); }
+.cat-icon-violet { background: rgba(139,92,246,0.1); }
+.cat-icon-emerald{ background: rgba(16,185,129,0.1); }
+.cat-icon-amber  { background: rgba(245,158,11,0.1); }
+.cat-icon-rose   { background: rgba(244,63,94,0.1); }
+
+.cat-name {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.95rem; font-weight: 700; color: var(--navy); margin-bottom: 4px;
+}
+.cat-count { font-size: 0.75rem; color: var(--slate-400); margin-bottom: 12px; }
+.cat-topics { display: flex; flex-wrap: wrap; gap: 4px; }
+.cat-topic-pill {
+  font-size: 0.65rem; padding: 2px 8px; border-radius: 20px;
+  background: var(--slate-100); color: var(--slate-500); font-weight: 500;
+}
+.cat-progress-bar {
+  margin-top: 14px; height: 3px; background: var(--slate-100); border-radius: 2px; overflow: hidden;
+}
+.cat-progress-fill { height: 100%; border-radius: 2px; transition: width 0.6s ease; }
+.fill-teal   { background: var(--teal); }
+.fill-cobalt { background: var(--cobalt); }
+.fill-violet { background: var(--violet); }
+.fill-emerald{ background: var(--emerald); }
+.fill-amber  { background: var(--amber); }
+.fill-rose   { background: var(--rose); }
+
+/* ── ACHIEVEMENTS ROW ── */
+.achievements-grid { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 28px; }
+.achievement-chip {
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px 16px; border-radius: 30px;
+  border: 1.5px solid var(--slate-200); background: var(--white);
+  transition: all var(--transition); cursor: default;
+  box-shadow: var(--shadow-sm);
+}
+.achievement-chip.earned {
+  border-color: transparent; background: linear-gradient(135deg, #FFFBEB, #FEF3C7);
+  box-shadow: 0 2px 8px rgba(245,158,11,0.2);
+  animation: badgeEarn 0.6s cubic-bezier(0.34,1.56,0.64,1) both;
+}
+@keyframes badgeEarn {
+  from { transform: scale(0.5); opacity: 0; }
+  to   { transform: scale(1); opacity: 1; }
+}
+.achievement-chip.locked { opacity: 0.45; filter: grayscale(0.5); }
+.ach-icon { font-size: 1.2rem; }
+.ach-name { font-size: 0.78rem; font-weight: 600; color: var(--slate-700); }
+.ach-name.gold { color: var(--amber); }
+
+/* ════════════════════════════════════════════
+   QUIZ SELECTION SCREEN
+════════════════════════════════════════════ */
+.quiz-select-header {
+  margin-bottom: 28px;
+}
+.back-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 0.82rem; font-weight: 600; color: var(--slate-500);
+  cursor: pointer; transition: color var(--transition); margin-bottom: 20px;
+  padding: 8px 14px; border-radius: 8px; border: 1.5px solid var(--slate-200);
+  background: var(--white); box-shadow: var(--shadow-sm);
+}
+.back-btn:hover { color: var(--navy); border-color: var(--slate-300); }
+.back-btn svg { width: 16px; height: 16px; }
+
+.select-cat-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1.6rem; font-weight: 700; color: var(--navy); letter-spacing: -0.02em;
+}
+.select-cat-sub { font-size: 0.9rem; color: var(--slate-500); margin-top: 4px; }
+
+.subtopic-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-bottom: 28px; }
+.subtopic-card {
+  background: var(--white); border: 2px solid var(--slate-200);
+  border-radius: var(--radius-lg); padding: 18px 20px; cursor: pointer;
+  transition: all var(--transition); display: flex; align-items: center; gap: 14px;
+}
+.subtopic-card:hover { border-color: var(--teal); box-shadow: var(--shadow); }
+.subtopic-card.selected { border-color: var(--teal); background: rgba(14,165,233,0.04); }
+.subtopic-check {
+  width: 20px; height: 20px; border-radius: 50%;
+  border: 2px solid var(--slate-300); flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  transition: all var(--transition);
+}
+.subtopic-card.selected .subtopic-check {
+  border-color: var(--teal); background: var(--teal);
+}
+.subtopic-check-inner {
+  width: 6px; height: 6px; border-radius: 50%; background: white;
+  transform: scale(0); transition: transform var(--transition);
+}
+.subtopic-card.selected .subtopic-check-inner { transform: scale(1); }
+.subtopic-name { font-size: 0.9rem; font-weight: 600; color: var(--navy); }
+.subtopic-count { font-size: 0.75rem; color: var(--slate-400); margin-top: 2px; }
+
+.diff-selector { display: flex; gap: 10px; margin-bottom: 28px; }
+.diff-btn {
+  flex: 1; padding: 12px; border-radius: var(--radius);
+  border: 2px solid var(--slate-200); background: var(--white);
+  font-size: 0.85rem; font-weight: 600; color: var(--slate-500);
+  cursor: pointer; transition: all var(--transition); text-align: center;
+}
+.diff-btn:hover { border-color: var(--slate-300); color: var(--slate-700); }
+.diff-btn.active.easy   { border-color: var(--emerald); background: var(--emerald-bg); color: var(--emerald); }
+.diff-btn.active.medium { border-color: var(--amber);   background: var(--amber-bg);   color: var(--amber); }
+.diff-btn.active.hard   { border-color: var(--rose);    background: var(--rose-bg);    color: var(--rose); }
+.diff-btn.active.all    { border-color: var(--cobalt);  background: var(--cobalt-bg);  color: var(--cobalt); }
+
+.qcount-row { display: flex; align-items: center; gap: 16px; margin-bottom: 28px; }
+.qcount-label { font-size: 0.82rem; font-weight: 600; color: var(--slate-600); white-space: nowrap; }
+.qcount-row input[type=range] { flex: 1; accent-color: var(--teal); cursor: pointer; }
+.qcount-val {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1rem; font-weight: 600; color: var(--navy);
+  min-width: 28px; text-align: right;
+}
+
+/* ════════════════════════════════════════════
+   QUIZ SCREEN
+════════════════════════════════════════════ */
+.quiz-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 20px; gap: 16px;
+}
+.quiz-meta-left { display: flex; align-items: center; gap: 10px; }
+.q-num-badge {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8rem; font-weight: 600; color: var(--teal);
+  background: var(--teal-glow); padding: 4px 12px; border-radius: 20px;
+  border: 1px solid rgba(14,165,233,0.2);
+}
+.q-topic-badge {
+  font-size: 0.72rem; font-weight: 600; color: var(--slate-500);
+  background: var(--slate-100); padding: 4px 12px; border-radius: 20px;
+}
+.q-timer {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85rem; font-weight: 600; color: var(--slate-500);
+}
+.quiz-progress-wrap { margin-bottom: 28px; }
+.quiz-progress-bar {
+  height: 6px; background: var(--slate-200); border-radius: 3px; overflow: hidden;
+}
+.quiz-progress-fill {
+  height: 100%; border-radius: 3px;
+  background: linear-gradient(90deg, var(--teal), var(--cobalt));
+  transition: width 0.5s cubic-bezier(0.4,0,0.2,1);
+  box-shadow: 0 0 8px rgba(14,165,233,0.4);
+  position: relative;
+}
+.quiz-progress-fill::after {
+  content: ''; position: absolute; right: 0; top: 50%; transform: translateY(-50%);
+  width: 12px; height: 12px; border-radius: 50%;
+  background: var(--cobalt); border: 2px solid white;
+  box-shadow: 0 0 6px rgba(37,99,235,0.4);
+}
+.quiz-progress-labels {
+  display: flex; justify-content: space-between; margin-top: 6px;
+  font-size: 0.72rem; color: var(--slate-400); font-weight: 500;
+}
+
+.question-card {
+  background: var(--white); border: 1px solid var(--slate-200);
+  border-radius: var(--radius-xl); padding: 32px; box-shadow: var(--shadow);
+  margin-bottom: 20px;
+}
+.q-diff-tag {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 0.7rem; font-weight: 700; padding: 3px 12px; border-radius: 20px;
+  text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 18px;
+}
+.q-diff-tag.easy   { background: var(--emerald-bg); color: var(--emerald); }
+.q-diff-tag.medium { background: var(--amber-bg);   color: var(--amber); }
+.q-diff-tag.hard   { background: var(--rose-bg);    color: var(--rose); }
+.q-diff-tag::before { content: '●'; font-size: 0.5rem; }
+
+.q-text-main {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1.18rem; font-weight: 600; color: var(--navy);
+  line-height: 1.55; letter-spacing: -0.01em;
+}
+
+.options-list { display: flex; flex-direction: column; gap: 10px; }
+.option-btn {
+  display: flex; align-items: flex-start; gap: 14px;
+  padding: 15px 18px; border-radius: var(--radius);
+  border: 2px solid var(--slate-200); background: var(--white);
+  cursor: pointer; transition: all var(--transition);
+  text-align: left; font-size: 0.92rem; color: var(--slate-700);
+  line-height: 1.5; width: 100%;
+}
+.option-btn:hover:not(.disabled) {
+  border-color: var(--teal); background: rgba(14,165,233,0.04);
+  transform: translateX(3px);
+}
+.option-letter {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 700; font-size: 0.78rem; color: var(--slate-500);
+  background: var(--slate-100); border-radius: 6px;
+  padding: 3px 9px; flex-shrink: 0; margin-top: 1px; min-width: 30px; text-align: center;
+}
+.option-btn.correct { border-color: var(--emerald); background: var(--emerald-bg); animation: correctPulse 0.4s ease; }
+.option-btn.correct .option-letter { background: var(--emerald); color: white; }
+.option-btn.wrong   { border-color: var(--rose); background: var(--rose-bg); animation: wrongShake 0.4s ease; }
+.option-btn.wrong   .option-letter { background: var(--rose); color: white; }
+.option-btn.reveal  { border-color: var(--emerald); background: var(--emerald-bg); opacity: 0.75; }
+.option-btn.reveal  .option-letter { background: var(--emerald); color: white; }
+.option-btn.disabled { cursor: default; }
+
+@keyframes correctPulse {
+  0%,100% { transform: scale(1); }
+  40%      { transform: scale(1.015); }
+}
+@keyframes wrongShake {
+  0%,100% { transform: translateX(0); }
+  25%     { transform: translateX(-6px); }
+  75%     { transform: translateX(6px); }
+}
+
+/* ── FEEDBACK PANEL ── */
+.feedback-panel {
+  border-radius: var(--radius-lg); padding: 20px 24px;
+  display: none; animation: feedbackSlide 0.3s ease; margin-bottom: 20px;
+}
+@keyframes feedbackSlide { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
+.feedback-panel.show { display: block; }
+.feedback-panel.correct { background: var(--emerald-bg); border-left: 4px solid var(--emerald); }
+.feedback-panel.wrong   { background: var(--rose-bg);    border-left: 4px solid var(--rose); }
+
+.feedback-head {
+  display: flex; align-items: center; gap: 8px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1rem; font-weight: 700; margin-bottom: 10px;
+}
+.feedback-panel.correct .feedback-head { color: var(--emerald); }
+.feedback-panel.wrong   .feedback-head { color: var(--rose); }
+.feedback-icon { font-size: 1.2rem; }
+
+.feedback-explanation { font-size: 0.88rem; color: var(--slate-700); line-height: 1.65; }
+.feedback-explanation strong { color: var(--navy); font-weight: 600; }
+
+.meme-strip {
+  margin-top: 12px; padding: 10px 14px; border-radius: var(--radius-sm);
+  background: rgba(0,0,0,0.04); font-size: 0.82rem; color: var(--slate-500);
+  font-style: italic; display: none;
+}
+.meme-strip.show { display: block; }
+
+/* ── QUIZ NAV BUTTONS ── */
+.quiz-nav { display: flex; justify-content: flex-end; }
+
+/* ════════════════════════════════════════════
+   RESULTS SCREEN
+════════════════════════════════════════════ */
+.results-hero {
+  background: linear-gradient(135deg, var(--navy), var(--navy-soft));
+  border-radius: var(--radius-xl); padding: 36px; margin-bottom: 24px;
+  text-align: center; position: relative; overflow: hidden; box-shadow: var(--shadow-xl);
+}
+.results-hero::before {
+  content: ''; position: absolute; inset: 0;
+  background: radial-gradient(ellipse at center, rgba(14,165,233,0.12) 0%, transparent 70%);
+}
+.score-ring-wrap { position: relative; width: 160px; height: 160px; margin: 0 auto 20px; }
+.score-ring-wrap svg { transform: rotate(-90deg); }
+.score-ring-text {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+}
+.score-pct-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 2.4rem; font-weight: 600; color: white; line-height: 1;
+}
+.score-pct-sym { font-size: 1rem; color: rgba(255,255,255,0.5); }
+.score-rating {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1.4rem; font-weight: 700; color: white; position: relative;
+}
+.score-meme-msg { font-size: 0.9rem; color: rgba(255,255,255,0.55); position: relative; margin-top: 6px; font-style: italic; }
+
+.results-stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; margin-bottom: 24px; }
+.result-stat {
+  background: var(--white); border-radius: var(--radius-lg); padding: 18px 20px;
+  text-align: center; border: 1px solid var(--slate-200); box-shadow: var(--shadow-sm);
+}
+.result-stat-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1.8rem; font-weight: 600; color: var(--navy); margin-bottom: 4px;
+}
+.result-stat-lbl { font-size: 0.75rem; color: var(--slate-400); font-weight: 500; }
+.result-stat.correct-stat .result-stat-num { color: var(--emerald); }
+.result-stat.wrong-stat   .result-stat-num { color: var(--rose); }
+
+.analysis-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+.analysis-card {
+  background: var(--white); border-radius: var(--radius-lg); padding: 20px;
+  border: 1px solid var(--slate-200); box-shadow: var(--shadow-sm);
+}
+.analysis-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.88rem; font-weight: 700; color: var(--navy); margin-bottom: 12px;
+  display: flex; align-items: center; gap: 6px;
+}
+.analysis-item {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 0.82rem; color: var(--slate-600); margin-bottom: 8px;
+}
+.analysis-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+.analysis-dot.good { background: var(--emerald); }
+.analysis-dot.bad  { background: var(--rose); }
+
+.breakdown-list { display: flex; flex-direction: column; gap: 6px; }
+.breakdown-row {
+  display: flex; align-items: center; gap: 10px;
+  font-size: 0.8rem; padding: 8px 12px; border-radius: var(--radius-sm);
+  background: var(--slate-50);
+}
+.breakdown-num { font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; color: var(--slate-400); min-width: 28px; }
+.breakdown-topic { flex: 1; color: var(--slate-600); }
+.breakdown-icon { font-size: 1rem; }
+
+.new-badges-wrap { margin-bottom: 24px; }
+.new-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 10px 18px; border-radius: 30px; margin: 4px;
+  background: linear-gradient(135deg, #FFFBEB, #FEF3C7);
+  border: 1.5px solid #FDE68A; box-shadow: 0 2px 8px rgba(245,158,11,0.15);
+  animation: badgeEarn 0.5s cubic-bezier(0.34,1.56,0.64,1) both;
+  font-size: 0.82rem; font-weight: 700; color: var(--amber);
+}
+.new-badge-icon { font-size: 1.1rem; }
+
+/* ════════════════════════════════════════════
+   BUTTONS
+════════════════════════════════════════════ */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 12px 24px; border-radius: var(--radius);
+  font-weight: 600; font-size: 0.88rem; cursor: pointer;
+  border: none; transition: all var(--transition); text-decoration: none;
+  font-family: 'Inter', sans-serif; letter-spacing: 0.01em;
+}
+.btn-primary {
+  background: linear-gradient(135deg, var(--teal), var(--cobalt));
+  color: white; box-shadow: 0 3px 12px rgba(14,165,233,0.35);
+}
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(14,165,233,0.4); }
+.btn-primary:active { transform: translateY(0); }
+.btn-outline {
+  background: var(--white); color: var(--navy);
+  border: 1.5px solid var(--slate-200); box-shadow: var(--shadow-sm);
+}
+.btn-outline:hover { border-color: var(--teal); color: var(--teal); }
+.btn-ghost { background: transparent; color: var(--teal); }
+.btn-ghost:hover { background: var(--teal-glow); }
+.btn-navy {
+  background: var(--navy); color: white; box-shadow: 0 3px 10px rgba(11,25,41,0.2);
+}
+.btn-navy:hover { background: var(--navy-soft); transform: translateY(-1px); }
+.btn-sm { padding: 8px 16px; font-size: 0.8rem; }
+.btn-lg { padding: 15px 32px; font-size: 0.95rem; border-radius: var(--radius-lg); }
+.btn-full { width: 100%; }
+.btn svg { width: 17px; height: 17px; }
+.btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none !important; }
+
+/* ════════════════════════════════════════════
+   SEARCH DROPDOWN
+════════════════════════════════════════════ */
+.search-dropdown {
+  position: absolute; top: calc(100% + 8px); left: 0; right: 0;
+  background: var(--white); border: 1px solid var(--slate-200);
+  border-radius: var(--radius-lg); box-shadow: var(--shadow-xl);
+  z-index: 200; max-height: 320px; overflow-y: auto; display: none;
+}
+.search-dropdown.open { display: block; animation: screenIn 0.2s ease; }
+.search-result-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 16px; cursor: pointer; transition: background var(--transition);
+  border-bottom: 1px solid var(--slate-100);
+}
+.search-result-item:hover { background: var(--slate-50); }
+.search-result-item:last-child { border-bottom: none; }
+.search-ri-icon { font-size: 1.2rem; width: 28px; text-align: center; }
+.search-ri-name { font-size: 0.85rem; font-weight: 600; color: var(--navy); }
+.search-ri-cat  { font-size: 0.72rem; color: var(--slate-400); margin-top: 2px; }
+
+/* ════════════════════════════════════════════
+   FOOTER
+════════════════════════════════════════════ */
+.app-footer {
+  background: var(--white); border-top: 1px solid var(--slate-200);
+  padding: 16px 24px;
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  font-size: 0.78rem; color: var(--slate-400);
+}
+.app-footer img { height: 20px; opacity: 0.65; }
+
+/* ════════════════════════════════════════════
+   RESPONSIVE
+════════════════════════════════════════════ */
+@media (max-width: 900px) {
+  .stats-grid     { grid-template-columns: repeat(2, 1fr); }
+  .categories-grid{ grid-template-columns: repeat(2, 1fr); }
+  .analysis-grid  { grid-template-columns: 1fr; }
+}
+@media (max-width: 600px) {
+  .page-wrap      { padding: 20px 14px 70px; }
+  .topnav         { padding: 0 14px; }
+  .nav-center     { display: none; }
+  .nav-powered-pill { display: none !important; }
+  .stats-grid     { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .categories-grid{ grid-template-columns: 1fr 1fr; gap: 10px; }
+  .subtopic-grid  { grid-template-columns: 1fr; }
+  .diff-selector  { flex-wrap: wrap; }
+  .welcome-banner { padding: 24px 20px; }
+  .welcome-title  { font-size: 1.25rem; }
+  .results-stats  { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .welcome-actions .btn { font-size: 0.8rem; padding: 10px 16px; }
+  .question-card  { padding: 20px; }
+  .banner-molecule-bg { display: none; }
+  .brand-name span:last-child { display: none; }
+}
+@media (max-width: 380px) {
+  .stats-grid     { grid-template-columns: 1fr 1fr; }
+  .categories-grid{ grid-template-columns: 1fr; }
+}
+
+/* ════════════════════════════════════════════
+   TOOLTIP
+════════════════════════════════════════════ */
+[data-tip] { position: relative; }
+[data-tip]::after {
+  content: attr(data-tip);
+  position: absolute; bottom: calc(100% + 8px); left: 50%; transform: translateX(-50%);
+  background: var(--navy); color: white; font-size: 0.72rem; white-space: nowrap;
+  padding: 5px 10px; border-radius: 6px; pointer-events: none;
+  opacity: 0; transition: opacity var(--transition); font-weight: 500;
+}
+[data-tip]:hover::after { opacity: 1; }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--slate-300); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--slate-400); }
+
+/* Empty state */
+.empty-state {
+  text-align: center; padding: 48px 24px; color: var(--slate-400);
+}
+.empty-state-icon { font-size: 2.5rem; margin-bottom: 12px; }
+.empty-state-text { font-size: 0.9rem; }
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════
+     LOADING SCREEN
+════════════════════════════════════════ -->
+<div id="loading-screen">
+  <div class="loader-molecule">
+    <div class="orbit-ring orbit-1"><div class="orbit-electron"></div></div>
+    <div class="orbit-ring orbit-2"><div class="orbit-electron"></div></div>
+    <div class="orbit-ring orbit-3"><div class="orbit-electron"></div></div>
+    <div class="molecule-nucleus"></div>
+  </div>
+  <div class="loader-title">Analytical Chemistry</div>
+  <div class="loader-subtitle">Master Series</div>
+  <div class="loader-progress-wrap">
+    <div class="loader-progress-bar">
+      <div class="loader-progress-fill" id="loader-fill"></div>
+    </div>
+    <div class="loader-pct" id="loader-pct">0%</div>
+  </div>
+  <div class="loader-quote" id="loader-quote">"Measure twice, titrate once."</div>
+  <div style="position:absolute;bottom:28px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:8px;opacity:0.45;">
+    <img src="https://res.cloudinary.com/duw82qno0/image/upload/v1782066731/dinglologo_iuyl7c.png" alt="Dinglo" style="height:20px;width:20px;object-fit:contain;border-radius:50%;background:rgba(255,255,255,0.1);padding:1px;" onerror="this.style.display='none'"/>
+    <span style="font-size:0.72rem;font-weight:600;color:rgba(255,255,255,0.7);letter-spacing:0.08em;font-family:'Inter',sans-serif;">Powered by Dinglo</span>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     MAIN APP
+════════════════════════════════════════ -->
+<div id="app">
+
+  <!-- TOP NAV -->
+  <nav class="topnav">
+    <div class="nav-brand">
+      <div class="nav-brand-icon" style="background:white; padding:2px; box-shadow: 0 2px 8px rgba(11,25,41,0.15);">
+        <img src="https://res.cloudinary.com/duw82qno0/image/upload/v1782066731/dinglologo_iuyl7c.png" alt="Dinglo" style="width:32px;height:32px;object-fit:contain;display:block;border-radius:8px;" onerror="this.parentElement.style.background='linear-gradient(135deg,var(--navy),var(--navy-soft))';this.style.display='none';"/>
+      </div>
+      <span class="brand-name">AnalChem <span>Master</span></span>
+    </div>
+    <div class="nav-center" style="position:relative;">
+      <div class="search-wrap">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <input class="search-input" id="search-input" type="text" placeholder="Search topics..." autocomplete="off"/>
+      </div>
+      <div class="search-dropdown" id="search-dropdown"></div>
+    </div>
+    <div class="nav-right">
+      <button class="nav-sound-btn" id="sound-toggle" data-tip="Toggle sound">
+        <svg id="sound-icon-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 010 14.14"/><path d="M15.54 8.46a5 5 0 010 7.07"/></svg>
+        <svg id="sound-icon-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>
+      </button>
+      <!-- Powered by Dinglo pill -->
+      <div style="display:flex;align-items:center;gap:7px;padding:5px 12px 5px 6px;background:var(--slate-50);border:1.5px solid var(--slate-200);border-radius:30px;box-shadow:var(--shadow-sm);">
+        <img src="https://res.cloudinary.com/duw82qno0/image/upload/v1782066731/dinglologo_iuyl7c.png" alt="Dinglo" style="height:22px;width:22px;object-fit:contain;border-radius:50%;border:1px solid var(--slate-200);background:white;" onerror="this.style.display='none'"/>
+        <span style="font-size:0.72rem;font-weight:700;color:var(--slate-500);letter-spacing:0.04em;white-space:nowrap;">Powered by <span style="color:var(--navy);">Dinglo</span></span>
+      </div>
+    </div>
+  </nav>
+
+  <!-- PAGE WRAP -->
+  <div class="page-wrap">
+
+    <!-- ════ DASHBOARD SCREEN ════ -->
+    <div class="screen active" id="screen-dashboard">
+
+      <!-- Welcome Banner -->
+      <div class="welcome-banner">
+        <div class="banner-molecule-bg">
+          <svg viewBox="0 0 160 160" fill="none">
+            <circle cx="80" cy="80" r="30" stroke="white" stroke-width="1.5" stroke-dasharray="4 4"/>
+            <circle cx="80" cy="80" r="55" stroke="white" stroke-width="1" stroke-dasharray="2 6"/>
+            <circle cx="80" cy="25" r="8" fill="white"/>
+            <circle cx="125" cy="100" r="6" fill="white" opacity=".6"/>
+            <circle cx="35" cy="110" r="5" fill="white" opacity=".5"/>
+            <circle cx="80" cy="80" r="12" fill="white" opacity=".15"/>
+          </svg>
+        </div>
+        <div class="welcome-banner-content">
+          <div class="welcome-eyebrow">🧪 Ready to Master Analytical Chemistry?</div>
+          <h1 class="welcome-title">Your Complete Study<br/>Companion for AnalChem</h1>
+          <p class="welcome-sub">300+ questions across all major topics — acid-base to chromatography, gravimetric to spectroscopy. Instant feedback, full explanations, every time.</p>
+          <div class="welcome-actions">
+            <button class="btn btn-primary btn-lg" onclick="App.startRandomQuiz()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+              Quick Quiz
+            </button>
+            <button class="btn btn-outline btn-lg" onclick="App.showScreen('screen-categories')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+              Browse Topics
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div class="stats-grid">
+        <div class="stat-card teal">
+          <div class="stat-icon-wrap teal">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>
+          </div>
+          <div class="stat-value" id="stat-quizzes">0</div>
+          <div class="stat-label">Quizzes Completed</div>
+        </div>
+        <div class="stat-card cobalt">
+          <div class="stat-icon-wrap cobalt">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          </div>
+          <div class="stat-value" id="stat-avg">—</div>
+          <div class="stat-label">Average Score</div>
+        </div>
+        <div class="stat-card emerald">
+          <div class="stat-icon-wrap emerald">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          </div>
+          <div class="stat-value" id="stat-best">—</div>
+          <div class="stat-label">Highest Score</div>
+        </div>
+        <div class="stat-card amber">
+          <div class="stat-icon-wrap amber">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
+          </div>
+          <div class="stat-value" id="stat-streak">0</div>
+          <div class="stat-label">Day Streak 🔥</div>
+        </div>
+      </div>
+
+      <!-- Daily Challenge -->
+      <div class="daily-challenge" onclick="App.startDailyChallenge()">
+        <div class="daily-badge">⚡</div>
+        <div class="daily-content">
+          <div class="daily-label">Daily Challenge</div>
+          <div class="daily-title" id="daily-topic">Today's Focus: Beer-Lambert Law & Absorbance</div>
+          <div class="daily-meta">10 questions · Mixed difficulty · Earn special badge</div>
+        </div>
+        <div class="daily-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></div>
+      </div>
+
+      <!-- Topic Categories -->
+      <div class="section-header">
+        <div>
+          <div class="section-title">Topic Categories</div>
+          <div class="section-sub">Choose a subject area to practice</div>
+        </div>
+        <span class="view-all-btn" onclick="App.showScreen('screen-categories')">View all →</span>
+      </div>
+      <div class="categories-grid" id="categories-grid"></div>
+
+      <!-- Achievements -->
+      <div class="section-header">
+        <div><div class="section-title">Achievements</div></div>
+      </div>
+      <div class="achievements-grid" id="achievements-grid"></div>
+
+    </div><!-- /dashboard -->
+
+    <!-- ════ CATEGORIES SCREEN ════ -->
+    <div class="screen" id="screen-categories">
+      <button class="back-btn" onclick="App.showScreen('screen-dashboard')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        Back to Dashboard
+      </button>
+      <div class="section-header">
+        <div>
+          <div class="section-title">All Topic Categories</div>
+          <div class="section-sub">Select a category to begin</div>
+        </div>
+      </div>
+      <div class="categories-grid" id="categories-grid-full"></div>
+    </div>
+
+    <!-- ════ QUIZ SELECT SCREEN ════ -->
+    <div class="screen" id="screen-quiz-select">
+      <button class="back-btn" id="select-back-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        Back
+      </button>
+      <div class="quiz-select-header">
+        <h2 class="select-cat-title" id="select-cat-title">Spectroscopy</h2>
+        <p class="select-cat-sub" id="select-cat-sub">Choose subtopics and configure your quiz</p>
+      </div>
+
+      <div class="section-header"><div class="section-title">Subtopics</div></div>
+      <div class="subtopic-grid" id="subtopic-grid"></div>
+
+      <div class="section-header"><div class="section-title">Difficulty</div></div>
+      <div class="diff-selector" id="diff-selector">
+        <button class="diff-btn active all" data-diff="all">All Levels</button>
+        <button class="diff-btn easy"   data-diff="easy">🟢 Easy</button>
+        <button class="diff-btn medium" data-diff="medium">🟡 Medium</button>
+        <button class="diff-btn hard"   data-diff="hard">🔴 Hard</button>
+      </div>
+
+      <div class="section-header"><div class="section-title">Number of Questions</div></div>
+      <div class="qcount-row">
+        <span class="qcount-label">Questions:</span>
+        <input type="range" id="qcount-slider" min="5" max="20" value="10" step="1"/>
+        <span class="qcount-val" id="qcount-val">10</span>
+      </div>
+
+      <button class="btn btn-primary btn-lg btn-full" id="start-quiz-btn" style="margin-top:8px;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        Start Quiz
+      </button>
+    </div>
+
+    <!-- ════ QUIZ SCREEN ════ -->
+    <div class="screen" id="screen-quiz">
+      <div class="quiz-header">
+        <div class="quiz-meta-left">
+          <span class="q-num-badge" id="q-num-badge">Q 1/10</span>
+          <span class="q-topic-badge" id="q-topic-badge">Topic</span>
+        </div>
+        <span class="q-timer" id="q-timer"></span>
+      </div>
+      <div class="quiz-progress-wrap">
+        <div class="quiz-progress-bar">
+          <div class="quiz-progress-fill" id="quiz-progress-fill" style="width:0%"></div>
+        </div>
+        <div class="quiz-progress-labels">
+          <span id="prog-correct" style="color:var(--emerald);">✓ 0 correct</span>
+          <span id="prog-remain">10 remaining</span>
+        </div>
+      </div>
+
+      <div class="question-card">
+        <div class="q-diff-tag" id="q-diff-tag">Easy</div>
+        <p class="q-text-main" id="q-text-main">Loading question...</p>
+        <div style="height:22px;"></div>
+        <div class="options-list" id="options-list"></div>
+      </div>
+
+      <div class="feedback-panel" id="feedback-panel">
+        <div class="feedback-head">
+          <span class="feedback-icon" id="fb-icon">✓</span>
+          <span id="fb-title">Correct!</span>
+        </div>
+        <div class="feedback-explanation" id="fb-explanation"></div>
+        <div class="meme-strip" id="meme-strip"></div>
+      </div>
+
+      <div class="quiz-nav">
+        <button class="btn btn-primary" id="btn-next" style="display:none;" onclick="App.nextQuestion()">
+          Next <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- ════ RESULTS SCREEN ════ -->
+    <div class="screen" id="screen-results">
+      <div class="results-hero">
+        <div class="score-ring-wrap">
+          <svg width="160" height="160" viewBox="0 0 160 160">
+            <circle cx="80" cy="80" r="68" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="10"/>
+            <circle cx="80" cy="80" r="68" fill="none" stroke="white" stroke-width="10"
+              stroke-linecap="round" stroke-dasharray="427.3" id="score-arc" stroke-dashoffset="427.3"
+              style="transition:stroke-dashoffset 1.2s cubic-bezier(0.4,0,0.2,1);"/>
+          </svg>
+          <div class="score-ring-text">
+            <span class="score-pct-num" id="score-pct-num">0</span>
+            <span class="score-pct-sym">%</span>
+          </div>
+        </div>
+        <div class="score-rating" id="score-rating">Great Work!</div>
+        <div class="score-meme-msg" id="score-meme-msg"></div>
+      </div>
+
+      <div class="results-stats">
+        <div class="result-stat correct-stat">
+          <div class="result-stat-num" id="res-correct">0</div>
+          <div class="result-stat-lbl">Correct</div>
+        </div>
+        <div class="result-stat wrong-stat">
+          <div class="result-stat-num" id="res-wrong">0</div>
+          <div class="result-stat-lbl">Wrong</div>
+        </div>
+        <div class="result-stat">
+          <div class="result-stat-num" id="res-total">0</div>
+          <div class="result-stat-lbl">Total</div>
+        </div>
+      </div>
+
+      <div id="new-badges-wrap" class="new-badges-wrap" style="display:none;">
+        <div class="section-header"><div class="section-title">🏆 New Badges Earned!</div></div>
+        <div id="new-badges-list"></div>
+      </div>
+
+      <div class="analysis-grid">
+        <div class="analysis-card">
+          <div class="analysis-title">💪 Strengths</div>
+          <div id="strengths-list"></div>
+        </div>
+        <div class="analysis-card">
+          <div class="analysis-title">📚 Needs Revision</div>
+          <div id="improve-list"></div>
+        </div>
+      </div>
+
+      <div style="background:var(--white);border:1px solid var(--slate-200);border-radius:var(--radius-lg);padding:20px;margin-bottom:24px;">
+        <div class="section-title" style="margin-bottom:14px;">Answer Breakdown</div>
+        <div class="breakdown-list" id="breakdown-list"></div>
+      </div>
+
+      <div style="display:flex;gap:12px;flex-wrap:wrap;">
+        <button class="btn btn-outline btn-lg" onclick="App.retryQuiz()">↺ Retry Same Quiz</button>
+        <button class="btn btn-primary btn-lg" onclick="App.showScreen('screen-dashboard')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          Back to Dashboard
+        </button>
+        <button class="btn btn-navy btn-lg" onclick="App.showScreen('screen-categories')">New Topic</button>
+      </div>
+    </div>
+
+  </div><!-- /page-wrap -->
+
+  <footer class="app-footer">
+    <div style="display:flex;align-items:center;gap:10px;">
+      <img src="https://res.cloudinary.com/duw82qno0/image/upload/v1782066731/dinglologo_iuyl7c.png" alt="Dinglo" style="height:26px;width:26px;object-fit:contain;border-radius:6px;border:1px solid var(--slate-200);background:white;padding:1px;box-shadow:var(--shadow-sm);" onerror="this.style.display='none'"/>
+      <span style="font-size:0.78rem;color:var(--slate-400);">Powered by <strong style="color:var(--navy);font-weight:700;">Dinglo</strong></span>
+      <span style="color:var(--slate-300);">·</span>
+      <span style="font-size:0.78rem;color:var(--slate-400);">Analytical Chemistry Master</span>
+      <span style="color:var(--slate-300);">·</span>
+      <span style="font-size:0.78rem;color:var(--slate-400);">© 2025</span>
+    </div>
+  </footer>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════════════════════
+   QUESTION BANK  — 120 questions across all 6 categories
+═══════════════════════════════════════════════════════════════ */
+const QUESTION_BANK = [
+
+/* ════ FUNDAMENTALS ════ */
+// Introduction to Analytical Chemistry
+{id:1,cat:"Fundamentals",sub:"Introduction to Analytical Chemistry",difficulty:"easy",
+ q:"Analytical chemistry is primarily concerned with:",
+ options:["Synthesising new chemical compounds","Determining the composition and quantity of substances","Designing industrial chemical reactors","Studying the thermodynamics of reactions"],
+ a:1, explain:"Analytical chemistry focuses on <strong>identifying</strong> what is in a sample (qualitative) and <strong>measuring how much</strong> is present (quantitative). It provides the methods and techniques to characterise chemical systems."},
+
+{id:2,cat:"Fundamentals",sub:"Introduction to Analytical Chemistry",difficulty:"medium",
+ q:"The difference between a qualitative and a quantitative analysis is that:",
+ options:["Qualitative uses instruments; quantitative uses chemicals","Qualitative identifies what is present; quantitative determines how much","Qualitative is more accurate than quantitative","Quantitative analysis only works for metals"],
+ a:1, explain:"<strong>Qualitative analysis</strong> answers 'what is present?' (e.g., identifying a cation). <strong>Quantitative analysis</strong> answers 'how much is present?' (e.g., measuring the concentration of a metal ion in mg/L)."},
+
+{id:3,cat:"Fundamentals",sub:"Introduction to Analytical Chemistry",difficulty:"hard",
+ q:"In the analytical process, the step that most significantly affects the reliability of the final result is:",
+ options:["Instrument calibration","Data processing","Sampling","Signal detection"],
+ a:2, explain:"<strong>Sampling</strong> is the most critical step. A perfectly executed analysis on an unrepresentative sample yields meaningless results. The sample must accurately represent the bulk material — errors here propagate through the entire procedure and cannot be corrected later."},
+
+{id:4,cat:"Fundamentals",sub:"Introduction to Analytical Chemistry",difficulty:"easy",
+ q:"Which of the following is an example of a primary standard?",
+ options:["NaOH solution","KMnO₄ solution","Anhydrous Na₂CO₃","HCl solution"],
+ a:2, explain:"A <strong>primary standard</strong> must be highly pure, stable, have a high molar mass, and be obtainable in a pure form. Anhydrous Na₂CO₃ meets all these criteria. NaOH and HCl are hygroscopic/volatile and must be standardised against a primary standard."},
+
+// Measurement & Errors
+{id:5,cat:"Fundamentals",sub:"Measurement & Errors",difficulty:"easy",
+ q:"Which type of error affects the accuracy but not the precision of measurements?",
+ options:["Random error","Gross error","Systematic error","Indeterminate error"],
+ a:2, explain:"<strong>Systematic (determinate) errors</strong> shift all results in one direction, reducing accuracy without necessarily affecting precision. They have identifiable causes (bias) and can be corrected. Random errors affect both accuracy and precision."},
+
+{id:6,cat:"Fundamentals",sub:"Measurement & Errors",difficulty:"medium",
+ q:"A burette reading error where the analyst always reads 0.05 mL too high is an example of:",
+ options:["Random error","Gross error","Constant systematic error","Personal error caused by random fluctuation"],
+ a:2, explain:"This is a <strong>constant systematic error</strong> — the same magnitude offset occurs in every reading. It could be due to improper eye level (parallax) consistently above the meniscus. It reduces accuracy but does not affect the precision of replicates."},
+
+{id:7,cat:"Fundamentals",sub:"Measurement & Errors",difficulty:"hard",
+ q:"The formula for % relative error is:",
+ options:["(True − Measured)/True × 100","(Measured − True)/True × 100","(Measured − True)/Measured × 100","True/Measured × 100"],
+ a:1, explain:"% Relative Error = <strong>(Measured − True) / True × 100%</strong>. A positive value indicates the measurement is higher than the true value; negative means lower. 'True' (accepted) value is in the denominator, making it a relative expression of accuracy."},
+
+// Significant Figures
+{id:8,cat:"Fundamentals",sub:"Significant Figures",difficulty:"easy",
+ q:"How many significant figures does the number 0.00340 have?",
+ options:["3","5","6","2"],
+ a:0, explain:"<strong>0.00340 has 3 significant figures</strong>: the leading zeros are placeholders (not significant), the digits 3, 4, and the trailing zero after 4 are significant. Trailing zeros after the decimal point are always significant."},
+
+{id:9,cat:"Fundamentals",sub:"Significant Figures",difficulty:"medium",
+ q:"The result of 12.11 + 0.234 + 1.8 (addition) should be reported as:",
+ options:["14.1","14.14","14.144","14.2"],
+ a:0, explain:"For <strong>addition/subtraction</strong>, the result has the same number of decimal places as the value with the fewest decimal places. 1.8 has only 1 decimal place, so the answer rounds to 14.1. (12.11 + 0.234 + 1.8 = 14.144 → 14.1)"},
+
+{id:10,cat:"Fundamentals",sub:"Significant Figures",difficulty:"hard",
+ q:"The result of (4.63 × 2.1) / 1.234 should contain how many significant figures?",
+ options:["2","3","4","5"],
+ a:0, explain:"For <strong>multiplication and division</strong>, the result has the same number of significant figures as the factor with the fewest sig figs. Here 2.1 has only <strong>2 significant figures</strong>, so the result must be expressed to 2 sig figs: (4.63 × 2.1)/1.234 = 9.7253... → 9.7."},
+
+// Accuracy & Precision
+{id:11,cat:"Fundamentals",sub:"Accuracy & Precision",difficulty:"easy",
+ q:"A set of measurements clustered tightly together but far from the true value is described as:",
+ options:["Accurate and precise","Accurate but not precise","Precise but not accurate","Neither accurate nor precise"],
+ a:2, explain:"<strong>Precision</strong> describes reproducibility (clustering together). <strong>Accuracy</strong> describes closeness to the true value. Tight clustering far from the true value = <strong>high precision, low accuracy</strong>. This often indicates systematic error."},
+
+{id:12,cat:"Fundamentals",sub:"Accuracy & Precision",difficulty:"medium",
+ q:"Which statistical measure best expresses the precision of a set of replicate measurements?",
+ options:["Mean","Median","Standard deviation","Absolute error"],
+ a:2, explain:"<strong>Standard deviation (s)</strong> quantifies the spread of replicate measurements around the mean — it is the primary measure of precision. A smaller standard deviation = higher precision. Relative standard deviation (RSD or %CV) allows comparison across different magnitudes."},
+
+/* ════ CLASSICAL METHODS ════ */
+{id:13,cat:"Classical Methods",sub:"Gravimetric Analysis",difficulty:"easy",
+ q:"In precipitation gravimetry, a large excess of precipitating agent is used to:",
+ options:["Increase the particle size","Decrease the molar mass of the precipitate","Decrease the solubility of the precipitate via the common ion effect","Increase the temperature of the solution"],
+ a:2, explain:"A large excess of precipitating agent reduces the analyte's solubility through the <strong>common ion effect</strong>, driving the precipitation equilibrium further to the right and ensuring more complete precipitation. However, too large an excess can cause peptisation."},
+
+{id:14,cat:"Classical Methods",sub:"Gravimetric Analysis",difficulty:"medium",
+ q:"Digestion in precipitation gravimetry involves:",
+ options:["Adding acid to dissolve the precipitate","Heating the precipitate in the mother liquor to improve crystal size and purity","Washing the precipitate with hot water","Igniting the precipitate at high temperature"],
+ a:1, explain:"<strong>Digestion</strong> (Ostwald ripening): heating the precipitate in the mother liquor causes small crystals to dissolve and recrystallise on larger ones. This improves filterability, reduces surface area for co-precipitation, and increases purity."},
+
+{id:15,cat:"Classical Methods",sub:"Gravimetric Analysis",difficulty:"hard",
+ q:"A sample of iron ore weighing 0.4852 g was dissolved and iron was precipitated as Fe(OH)₃, then ignited to Fe₂O₃ (M = 159.69 g/mol). If 0.3210 g of Fe₂O₃ was obtained, what is the % Fe (M = 55.85 g/mol)?",
+ options:["32.85%","46.41%","23.25%","65.72%"],
+ a:1, explain:"Moles Fe₂O₃ = 0.3210/159.69 = 2.010×10⁻³ mol. Each mole Fe₂O₃ contains <strong>2 mol Fe</strong>: moles Fe = 4.019×10⁻³ mol. Mass Fe = 4.019×10⁻³ × 55.85 = 0.2245 g. %Fe = (0.2245/0.4852) × 100 = <strong>46.3%</strong>."},
+
+{id:16,cat:"Classical Methods",sub:"Volumetric Analysis",difficulty:"easy",
+ q:"Standardisation of a solution means:",
+ options:["Filtering the solution through a standard membrane","Precisely determining the concentration of the solution using a primary standard","Diluting the solution to a known volume","Heating the solution to remove dissolved gases"],
+ a:1, explain:"<strong>Standardisation</strong> is the process of precisely determining the concentration of a reagent solution (like NaOH) by titrating it against a <strong>primary standard</strong> of known purity and composition. The exact concentration is then used in subsequent analyses."},
+
+{id:17,cat:"Classical Methods",sub:"Acid-Base Titrations",difficulty:"easy",
+ q:"The equivalence point in a strong acid/strong base titration occurs at:",
+ options:["pH 7 always","pH > 7","pH < 7","pH 7 at 25°C only for equal-strength acid and base"],
+ a:3, explain:"For <strong>strong acid + strong base</strong>, the salt produced (e.g., NaCl) does not hydrolyse. pH = 7 occurs at 25°C. At higher temperatures, Kw increases and neutral pH decreases slightly below 7 — so strictly, pH = 7 applies only at 25°C."},
+
+{id:18,cat:"Classical Methods",sub:"Acid-Base Titrations",difficulty:"medium",
+ q:"In the titration of a weak acid (HA, pKa = 4.74) with a strong base, the pH at the half-equivalence point is:",
+ options:["7.00","4.74","9.26","2.37"],
+ a:1, explain:"At the <strong>half-equivalence point</strong>, exactly half the acid has been neutralised: [HA] = [A⁻]. From Henderson-Hasselbalch: pH = pKa + log(1) = pKa + 0 = <strong>pKa = 4.74</strong>. This is a reliable experimental method to determine pKa."},
+
+{id:19,cat:"Classical Methods",sub:"Acid-Base Titrations",difficulty:"hard",
+ q:"Which of the following best explains why phenolphthalein is NOT suitable for titrating a strong base with a weak acid (equivalence point near pH 5.5)?",
+ options:["It changes colour at pH 8.2–10, which is far from pH 5.5","It is not soluble in the titration medium","It reacts with the weak acid","It requires a pH > 14 to change colour"],
+ a:0, explain:"Phenolphthalein changes colour in the range <strong>pH 8.2–10.0</strong>, well above the equivalence point of ~5.5. At pH 5.5, phenolphthalein remains colourless throughout the titration, giving no colour change at the endpoint. Methyl orange (pH 3.1–4.4) or methyl red (pH 4.4–6.2) would be appropriate."},
+
+{id:20,cat:"Classical Methods",sub:"Redox Titrations",difficulty:"medium",
+ q:"In an acidic permanganate titration, MnO₄⁻ acts as its own indicator because:",
+ options:["It produces a white precipitate at the endpoint","The intense purple colour of excess MnO₄⁻ signals the endpoint","It absorbs UV radiation","It changes from pink to colourless at the endpoint"],
+ a:1, explain:"KMnO₄ is intensely purple/violet. In acidic solution, it is reduced to the nearly colourless Mn²⁺. At the endpoint, one drop of excess KMnO₄ produces a <strong>persistent faint pink/purple colour</strong> that does not fade within 30 seconds — this serves as the endpoint indicator without needing an added indicator."},
+
+{id:21,cat:"Classical Methods",sub:"Redox Titrations",difficulty:"hard",
+ q:"In iodometric determination of dissolved oxygen (Winkler method), the sequence of reactions is:",
+ options:["O₂ → I₂ → starch endpoint","Mn²⁺ → MnO₂ → I₂ → thiosulfate endpoint","I⁻ directly reduces O₂ → I₂ → blue starch endpoint","O₂ → permanganate → colour change"],
+ a:1, explain:"In the <strong>Winkler method</strong>: (1) O₂ oxidises Mn²⁺ to MnO₂ (under alkaline conditions). (2) On acidification, MnO₂ oxidises I⁻ to I₂. (3) Liberated I₂ is titrated with standard Na₂S₂O₃ using <strong>starch as indicator</strong> (blue → colourless at endpoint). Starch is added near the endpoint to avoid I₃⁻ complexation errors."},
+
+{id:22,cat:"Classical Methods",sub:"Complexometric Titrations",difficulty:"easy",
+ q:"EDTA forms stable complexes with metal ions primarily because:",
+ options:["It has a very low molecular weight","It is a hexadentate ligand that chelates the metal through multiple donor atoms","It is a strong acid","It has only one carboxylate group"],
+ a:1, explain:"EDTA (Y⁴⁻) is a <strong>hexadentate chelating agent</strong> with 2 nitrogen and 4 carboxylate oxygen donor atoms. It wraps around the metal ion forming up to 6 coordinate bonds simultaneously, creating highly stable 1:1 complexes with a wide range of metal ions."},
+
+{id:23,cat:"Classical Methods",sub:"Complexometric Titrations",difficulty:"medium",
+ q:"Why is the pH usually adjusted to ~10 in EDTA titrations for Ca²⁺ and Mg²⁺?",
+ options:["To precipitate interfering heavy metals","To ensure EDTA exists mainly as Y⁴⁻, which forms the most stable complexes","To dissolve the indicator","To prevent oxidation of EDTA"],
+ a:1, explain:"EDTA is a polyprotic acid (H₄Y). At pH 10, the fraction existing as the fully deprotonated form <strong>Y⁴⁻</strong> (α₄) is maximised. Y⁴⁻ has the highest charge density and forms the most stable complexes. At lower pH, protonated forms dominate, competing with metal binding and giving incomplete reactions."},
+
+/* ════ SPECTROSCOPY ════ */
+{id:24,cat:"Spectroscopy",sub:"UV-Visible Spectroscopy",difficulty:"easy",
+ q:"Beer-Lambert Law: A = εlc. What does ε (epsilon) represent?",
+ options:["Path length (cm)","Molar absorptivity (L mol⁻¹ cm⁻¹)","Transmittance","Absorbance"],
+ a:1, explain:"<strong>ε (molar absorptivity)</strong>, also called the molar extinction coefficient, has units of <strong>L mol⁻¹ cm⁻¹</strong>. It is an intrinsic property of the analyte at a given wavelength — a measure of how strongly the compound absorbs light. Higher ε = stronger absorber."},
+
+{id:25,cat:"Spectroscopy",sub:"UV-Visible Spectroscopy",difficulty:"medium",
+ q:"A UV-Vis measurement at absorbance A = 0.845. What is the percent transmittance?",
+ options:["8.45%","14.3%","85.5%","91.6%"],
+ a:1, explain:"A = −log T → T = 10^(−A) = 10^(−0.845) = 0.143. %T = T × 100 = <strong>14.3%</strong>. Note: 'percent transmittance' is always T × 100. At A = 1, %T = 10%; at A = 2, %T = 1%."},
+
+{id:26,cat:"Spectroscopy",sub:"UV-Visible Spectroscopy",difficulty:"hard",
+ q:"Which of the following would cause a negative deviation from Beer's Law?",
+ options:["Use of polychromatic radiation","Stray light when the sample has low absorbance","Fluorescence of the analyte","High analyte concentration causing index of refraction changes"],
+ a:2, explain:"<strong>Fluorescence</strong> causes a negative deviation: excited analyte molecules emit photons at different wavelengths, some of which reach the detector — the detector 'sees' more light than it should, reporting artificially low absorbance. Options A, B (at high A), and D typically cause positive deviations."},
+
+{id:27,cat:"Spectroscopy",sub:"Infrared Spectroscopy",difficulty:"easy",
+ q:"IR spectroscopy is based on the absorption of radiation that causes:",
+ options:["Electronic transitions between molecular orbitals","Vibrational and rotational transitions within molecules","Nuclear spin transitions","Ionisation of electrons"],
+ a:1, explain:"<strong>Infrared radiation</strong> has energy corresponding to <strong>molecular vibrational and rotational energy levels</strong>. When the IR frequency matches a natural vibrational frequency of a bond, absorption occurs — this is the basis of IR spectroscopy for functional group identification."},
+
+{id:28,cat:"Spectroscopy",sub:"Infrared Spectroscopy",difficulty:"medium",
+ q:"The 'fingerprint region' in an IR spectrum is approximately:",
+ options:["4000–2500 cm⁻¹","2500–2000 cm⁻¹","1500–500 cm⁻¹","1800–1600 cm⁻¹"],
+ a:2, explain:"The <strong>fingerprint region (400–1500 cm⁻¹)</strong> contains complex overlapping vibrations (C-C, C-N, C-O stretches and bends) that are unique to each molecule. It is used for compound identification by comparison with reference spectra. The region 1500–4000 cm⁻¹ contains diagnostic group frequencies."},
+
+{id:29,cat:"Spectroscopy",sub:"Atomic Absorption Spectroscopy",difficulty:"easy",
+ q:"The light source most commonly used in AAS is:",
+ options:["Xenon arc lamp","Hollow cathode lamp","Deuterium lamp","Tungsten filament lamp"],
+ a:1, explain:"The <strong>Hollow Cathode Lamp (HCL)</strong> is the standard source for AAS. The cathode is made of (or lined with) the element of interest. Under low-pressure discharge, metal atoms are excited and emit sharp, element-specific spectral lines matching the absorption lines of the analyte — essential for selectivity."},
+
+{id:30,cat:"Spectroscopy",sub:"Atomic Absorption Spectroscopy",difficulty:"medium",
+ q:"The role of the flame in flame AAS is to:",
+ options:["Provide light for absorption","Atomise the sample into free ground-state atoms","Act as a wavelength selector","Amplify the signal from the detector"],
+ a:1, explain:"The flame (or graphite furnace) <strong>atomises</strong> the sample: it desolvates the aerosol, volatilises the dry residue, and breaks chemical bonds to produce free, <strong>ground-state atoms</strong> in the gas phase. These atoms then absorb radiation from the HCL at characteristic wavelengths."},
+
+{id:31,cat:"Spectroscopy",sub:"Atomic Absorption Spectroscopy",difficulty:"hard",
+ q:"Matrix modifiers in graphite furnace AAS (GFAAS) serve to:",
+ options:["Increase the furnace temperature","Allow the matrix to be volatilised at a lower temperature than the analyte, reducing interferences","Increase the sample volume that can be used","Improve the hollow cathode lamp performance"],
+ a:1, explain:"Matrix modifiers (e.g., Pd/Mg(NO₃)₂) are added to the sample in GFAAS to: (1) allow the <strong>matrix to be charred/volatilised at a lower temperature</strong> than the analyte during the pyrolysis step, and (2) stabilise the analyte to a higher temperature. This removes matrix interferences while retaining the analyte for the atomisation step."},
+
+{id:32,cat:"Spectroscopy",sub:"Atomic Emission Spectroscopy",difficulty:"medium",
+ q:"In ICP-AES (ICP-OES), the inductively coupled plasma reaches temperatures of approximately:",
+ options:["1000–2000 K","2500–3500 K","6000–10000 K","300–500 K"],
+ a:2, explain:"The <strong>inductively coupled plasma (ICP)</strong> operates at 6000–10000 K — far hotter than chemical flames (2000–3000 K). This extreme temperature ensures complete atomisation and excitation of all elements simultaneously, making ICP-AES a powerful multi-element technique with very low detection limits."},
+
+/* ════ ELECTROANALYTICAL METHODS ════ */
+{id:33,cat:"Electroanalytical Methods",sub:"Potentiometry",difficulty:"easy",
+ q:"A glass electrode measures pH because:",
+ options:["It produces a current proportional to H⁺ concentration","A potential develops across the glass membrane proportional to the log of H⁺ activity","It absorbs H⁺ ions directly","It reacts with H⁺ to produce a colour change"],
+ a:1, explain:"The glass electrode contains a thin pH-sensitive glass membrane. H⁺ ions interact with silicate sites on the glass surfaces, creating a <strong>Donnan potential</strong> across the membrane. This potential follows the Nernst equation: E = const − 0.0592 pH (at 25°C)."},
+
+{id:34,cat:"Electroanalytical Methods",sub:"Potentiometry",difficulty:"medium",
+ q:"An ion-selective electrode (ISE) responds to analyte activity rather than concentration. These are related by:",
+ options:["Activity = concentration × molar mass","Activity = concentration × activity coefficient (γ)","Activity = concentration / ionic strength","Activity = log[concentration]"],
+ a:1, explain:"<strong>Activity (a) = γ × c</strong>, where γ is the <strong>activity coefficient</strong> (dimensionless) and c is the molar concentration. At low ionic strength, γ → 1 and activity ≈ concentration. At higher ionic strengths, γ < 1 due to interionic interactions (Debye-Hückel theory)."},
+
+{id:35,cat:"Electroanalytical Methods",sub:"Electrochemical Cells",difficulty:"easy",
+ q:"The standard cell potential E°cell for a spontaneous electrochemical reaction is:",
+ options:["Always negative","Always positive","Zero","Equal to the reduction potential of the cathode only"],
+ a:1, explain:"For a <strong>spontaneous galvanic cell</strong>, E°cell = E°cathode − E°anode > 0. A positive E°cell corresponds to ΔG° = −nFE° < 0, confirming spontaneity. If E°cell were negative, the reaction would be non-spontaneous in the direction written."},
+
+{id:36,cat:"Electroanalytical Methods",sub:"Electrochemical Cells",difficulty:"hard",
+ q:"The Nernst equation at 25°C for the reaction Zn + Cu²⁺ → Zn²⁺ + Cu (E° = +1.10 V, n=2) when [Zn²⁺] = 0.10 M and [Cu²⁺] = 0.001 M is:",
+ options:["E = 1.10 + 0.030 V = 1.130 V","E = 1.10 − (0.0592/2)log(0.10/0.001) = 1.041 V","E = 1.10 + 0.0592 V","E = 0.80 V"],
+ a:1, explain:"Nernst equation: E = E° − (0.0592/n) × log([Zn²⁺]/[Cu²⁺]) = 1.10 − (0.0296) × log(0.10/0.001) = 1.10 − (0.0296)(2) = 1.10 − 0.0592 ≈ <strong>1.041 V</strong>. Higher [Zn²⁺]/lower [Cu²⁺] decreases the driving force."},
+
+{id:37,cat:"Electroanalytical Methods",sub:"Voltammetry",difficulty:"medium",
+ q:"In polarography (DC polarography), the half-wave potential (E₁/₂) is useful because:",
+ options:["It indicates the total charge transferred","It is characteristic of the analyte (qualitative identification) and independent of concentration","It equals the standard electrode potential exactly","It corresponds to the peak current"],
+ a:1, explain:"The <strong>half-wave potential (E₁/₂)</strong> in polarography is the potential at half the limiting current. It is characteristic of the <strong>analyte species under specific conditions</strong> (electrolyte, pH), allowing qualitative identification. The limiting current (diffusion current) is proportional to concentration, providing quantitative information."},
+
+{id:38,cat:"Electroanalytical Methods",sub:"Conductometry",difficulty:"medium",
+ q:"The molar conductivity of a strong electrolyte solution decreases with increasing concentration primarily because:",
+ options:["The number of ions decreases","Interionic attractions reduce the mobility of ions (Kohlrausch law)","The solution viscosity decreases","The electrodes become polarised"],
+ a:1, explain:"At higher concentrations, <strong>interionic interactions</strong> (electrostatic forces between oppositely charged ions) slow down ion migration (reduce ionic mobility). This is described by <strong>Kohlrausch's law</strong>: Λm = Λ°m − K√c, where Λ°m is the limiting molar conductivity at infinite dilution."},
+
+/* ════ SEPARATION TECHNIQUES ════ */
+{id:39,cat:"Separation Techniques",sub:"Chromatography",difficulty:"easy",
+ q:"In chromatography, the retention time (tR) is:",
+ options:["The time for the mobile phase to travel through the column","The time between injection and elution of the analyte peak maximum","The time for the stationary phase to regenerate","The difference between two peak retention times"],
+ a:1, explain:"<strong>Retention time (tR)</strong> is the elapsed time from sample injection to the appearance of the peak maximum for a specific analyte. It depends on the analyte's affinity for the stationary phase, mobile phase composition, column temperature, and flow rate."},
+
+{id:40,cat:"Separation Techniques",sub:"Chromatography",difficulty:"medium",
+ q:"Chromatographic peak resolution Rs = 1.5 indicates:",
+ options:["50% peak overlap","Baseline separation of two adjacent peaks","The peaks are completely merged","Rs must be exactly 1.0 for analysis"],
+ a:1, explain:"<strong>Rs ≥ 1.5</strong> is the criterion for complete <strong>baseline resolution</strong> of two adjacent peaks with similar widths. Rs = 1.0 gives ~94% resolution with ~2% overlap. Rs = 0.5 indicates significant overlap. Rs = 1.5 is the standard target in method development."},
+
+{id:41,cat:"Separation Techniques",sub:"HPLC",difficulty:"medium",
+ q:"In reversed-phase HPLC (RP-HPLC), which compound would elute first from a C18 column with a water/acetonitrile mobile phase?",
+ options:["A highly non-polar hydrocarbon","A polar amino acid","An aromatic ketone","A long-chain fatty acid"],
+ a:1, explain:"In <strong>RP-HPLC</strong>, the stationary phase (C18) is non-polar. <strong>Polar compounds interact less</strong> with C18 and are retained less, eluting first. A polar amino acid has low affinity for C18 and will be swept through rapidly by the polar aqueous mobile phase, eluting first."},
+
+{id:42,cat:"Separation Techniques",sub:"HPLC",difficulty:"hard",
+ q:"The van Deemter equation H = A + B/u + Cu describes column efficiency. At very high linear velocities (u), which term dominates and causes efficiency to decrease?",
+ options:["A (Eddy diffusion)","B/u (Longitudinal diffusion)","Cu (Mass transfer resistance)","All terms equally"],
+ a:2, explain:"At <strong>high linear velocities</strong>, the <strong>C·u term (mass transfer resistance)</strong> dominates. Analyte molecules don't have enough time to equilibrate between the stationary and mobile phases, causing band broadening. The B/u term becomes negligible at high u. The van Deemter optimum occurs where dH/du = 0, minimising H."},
+
+{id:43,cat:"Separation Techniques",sub:"Gas Chromatography",difficulty:"easy",
+ q:"Gas chromatography (GC) is suitable for analysing compounds that are:",
+ options:["Ionic and non-volatile","High molecular weight proteins","Volatile and thermally stable","Insoluble in organic solvents"],
+ a:2, explain:"GC requires the analyte to be in the <strong>gas phase</strong> during separation. This requires the compound to be <strong>volatile</strong> (significant vapour pressure) and <strong>thermally stable</strong> at the operating temperature (often 100–300°C). Ionic, high MW, or thermally labile compounds are not suitable for GC."},
+
+{id:44,cat:"Separation Techniques",sub:"Gas Chromatography",difficulty:"medium",
+ q:"The most selective detector for analysing organochlorine pesticides by GC is:",
+ options:["Thermal conductivity detector (TCD)","Flame ionisation detector (FID)","Electron capture detector (ECD)","Mass spectrometer (MS)"],
+ a:2, explain:"The <strong>Electron Capture Detector (ECD)</strong> is extremely sensitive to electronegative compounds such as <strong>chlorinated pesticides, halogenated compounds, and nitro-compounds</strong>. It responds to species that capture electrons from a radioactive beta source. FID is for hydrocarbons; TCD is universal but less sensitive; MS provides structural information."},
+
+{id:45,cat:"Separation Techniques",sub:"Thin Layer Chromatography",difficulty:"easy",
+ q:"On a TLC plate, after development, spots are observed at distances of 3.0 cm (compound) and 7.5 cm (solvent front) from the origin. The Rf value is:",
+ options:["0.40","2.50","0.60","1.67"],
+ a:0, explain:"<strong>Rf = distance spot / distance solvent</strong> = 3.0/7.5 = <strong>0.40</strong>. Rf values range from 0 (no movement, at origin) to 1 (moved with the solvent front). Rf values between 0.2–0.8 are considered optimal for TLC separations."},
+
+{id:46,cat:"Separation Techniques",sub:"Thin Layer Chromatography",difficulty:"medium",
+ q:"Silica gel, the most common stationary phase for TLC, separates compounds primarily based on:",
+ options:["Molecular size","Volatility differences","Polarity — more polar compounds are retained longer","Molecular weight"],
+ a:2, explain:"Silica gel is a polar, acidic adsorbent. In <strong>normal phase TLC</strong> (silica + non-polar solvent), more <strong>polar compounds adsorb more strongly</strong> to the silica and have lower Rf values (move less). Non-polar compounds travel further (higher Rf). Polarity matching between analyte and adsorbent governs retention."},
+
+/* ════ ADVANCED ANALYTICAL CHEMISTRY ════ */
+{id:47,cat:"Advanced",sub:"Method Validation",difficulty:"easy",
+ q:"Selectivity in method validation refers to:",
+ options:["The ability to measure very low concentrations","The ability to correctly measure the analyte in the presence of interferences","The reproducibility of measurements","The linear range of the method"],
+ a:1, explain:"<strong>Selectivity (specificity)</strong> is the ability of a method to measure the analyte accurately in the presence of other components in the sample matrix (interferences, degradation products, excipients). A highly selective method gives the correct result even in complex matrices."},
+
+{id:48,cat:"Advanced",sub:"Method Validation",difficulty:"medium",
+ q:"The limit of quantification (LOQ) is typically defined as:",
+ options:["Signal = blank + 3σ_blank","Signal = blank + 10σ_blank","The lowest concentration on the calibration curve","The concentration that gives A = 0.1"],
+ a:1, explain:"IUPAC defines <strong>LOQ = blank signal + 10σ_blank</strong>, corresponding to ~10× signal-to-noise ratio. At the LOQ, the analyte can be <strong>quantified with acceptable precision and accuracy</strong> (typically ≤20% RSD). The LOD (blank + 3σ) allows detection but not reliable quantitation."},
+
+{id:49,cat:"Advanced",sub:"Quality Control",difficulty:"easy",
+ q:"In a Shewhart control chart, the Upper Control Limit (UCL) is set at:",
+ options:["Mean + 1σ","Mean + 2σ","Mean + 3σ","Mean + 5σ"],
+ a:2, explain:"Control chart limits: <strong>UCL/LCL = mean ± 3σ</strong> (action limits, 99.7% probability). Warning limits are at mean ± 2σ (95.4%). A data point outside ±3σ indicates the process is likely out of statistical control and requires investigation before further analysis."},
+
+{id:50,cat:"Advanced",sub:"Quality Control",difficulty:"medium",
+ q:"A certified reference material (CRM) differs from a reference material (RM) because:",
+ options:["CRMs are cheaper","CRMs have property values certified by a competent body with stated uncertainty, traceable to SI units","CRMs can only be used for calibration","CRMs are prepared in-house"],
+ a:1, explain:"A <strong>CRM</strong> (e.g., NIST SRM) has certified values with stated measurement uncertainty, established by a metrologically competent body, <strong>traceable to SI units</strong>. An RM may have reference values but without the formal certification process. CRMs are essential for demonstrating measurement traceability."},
+
+{id:51,cat:"Advanced",sub:"Sampling Techniques",difficulty:"medium",
+ q:"Random sampling in analytical chemistry means:",
+ options:["Taking the first sample available","Each portion of the population has an equal probability of being selected","Only samples from the top of a container are taken","Samples are collected at fixed time intervals"],
+ a:1, explain:"In <strong>random sampling</strong>, every unit of the population has an equal and independent chance of being included in the sample. This is essential to obtain a <strong>representative sample</strong> free from sampling bias. Systematic sampling, composite sampling, and stratified sampling are alternatives for specific situations."},
+
+{id:52,cat:"Advanced",sub:"Instrumental Analysis",difficulty:"hard",
+ q:"In mass spectrometry, the m/z of a singly charged ion is 179. If the molecule loses a CH₂OH group (M = 31) as a neutral radical, what is the m/z of the daughter ion?",
+ options:["148","210","31","132"],
+ a:0, explain:"The parent ion at m/z = 179 loses a neutral fragment of mass 31 (CH₂OH·). The <strong>daughter (fragment) ion</strong> has m/z = 179 − 31 = <strong>148</strong>. Note: neutral fragments lost (radicals or molecules) do not contribute to m/z, only the charged fragment is detected."},
+
+/* ════ MORE QUESTIONS — MIXED ════ */
+{id:53,cat:"Fundamentals",sub:"Measurement & Errors",difficulty:"medium",
+ q:"A student records 5 measurements: 12.1, 12.3, 12.0, 12.2, 11.9 g. What is the mean?",
+ options:["12.1 g","12.2 g","12.15 g","12.3 g"],
+ a:0, explain:"Mean = (12.1+12.3+12.0+12.2+11.9)/5 = 60.5/5 = <strong>12.1 g</strong>. The mean is the arithmetic average of all measurements and represents the best estimate of the true value when random errors are present."},
+
+{id:54,cat:"Classical Methods",sub:"Acid-Base Titrations",difficulty:"medium",
+ q:"25.00 mL of 0.1000 M HCl requires 24.50 mL of NaOH for neutralisation. What is the molarity of NaOH?",
+ options:["0.1020 M","0.1000 M","0.0980 M","0.9800 M"],
+ a:0, explain:"At equivalence: n(HCl) = n(NaOH). n(HCl) = 0.02500 × 0.1000 = 2.500×10⁻³ mol. [NaOH] = 2.500×10⁻³ / 0.02450 = <strong>0.1020 M</strong>."},
+
+{id:55,cat:"Spectroscopy",sub:"UV-Visible Spectroscopy",difficulty:"medium",
+ q:"The method of standard addition is preferred over external calibration when:",
+ options:["The blank has zero absorbance","Matrix effects cause signal enhancement or suppression","The analyte concentration is very high","The Beer's Law range is very wide"],
+ a:1, explain:"<strong>Standard addition</strong> compensates for <strong>matrix effects</strong>. Known amounts of pure analyte are spiked into the actual sample, so the analyte signal experiences the same matrix environment as the unknown. The x-intercept of the signal vs. added concentration plot gives the original analyte concentration."},
+
+{id:56,cat:"Separation Techniques",sub:"HPLC",difficulty:"easy",
+ q:"In HPLC, 'isocratic elution' means:",
+ options:["The column temperature changes during the run","The mobile phase composition remains constant throughout the run","Multiple columns are used in series","The flow rate increases linearly"],
+ a:1, explain:"<strong>Isocratic elution</strong>: constant mobile phase composition throughout the run. In contrast, <strong>gradient elution</strong> changes the mobile phase strength during the run (e.g., increasing organic solvent % over time) to elute analytes with a wide range of affinities more efficiently."},
+
+{id:57,cat:"Electroanalytical Methods",sub:"Potentiometry",difficulty:"hard",
+ q:"The Nernst slope for a monovalent cation at 25°C is approximately:",
+ options:["+59.2 mV per decade","−59.2 mV per decade","+29.6 mV per decade","−29.6 mV per decade"],
+ a:0, explain:"For a cation M⁺ (n = 1): E = const + <strong>(0.0592/1) × log[M⁺]</strong> = const + 0.0592 log[M⁺]. The slope is <strong>+59.2 mV/decade</strong> (increase in activity). For divalent cations (n=2): 0.0592/2 = 29.6 mV/decade. For anions, the slope is negative."},
+
+{id:58,cat:"Classical Methods",sub:"Redox Titrations",difficulty:"easy",
+ q:"In a redox reaction, the oxidising agent is the species that:",
+ options:["Loses electrons and is oxidised","Gains electrons and is reduced","Donates protons","Accepts protons"],
+ a:1, explain:"The <strong>oxidising agent</strong> (oxidant) <strong>gains electrons</strong> and is itself <strong>reduced</strong> during the reaction. The reducing agent loses electrons and is oxidised. Memory aid: OIL RIG — Oxidation Is Loss, Reduction Is Gain (of electrons)."},
+
+{id:59,cat:"Advanced",sub:"Method Validation",difficulty:"hard",
+ q:"Robustness testing during method validation involves:",
+ options:["Testing the method with different analysts and laboratories","Deliberately varying method parameters slightly (temperature, pH, flow rate) to assess their influence on results","Testing only the highest concentration standard","Comparing the method to a gravimetric procedure"],
+ a:1, explain:"<strong>Robustness</strong> (ICH Q2 guideline) evaluates a method's capacity to remain unaffected by small, deliberate variations in parameters (e.g., ±0.1 pH unit, ±2°C, ±5% flow rate). Robustness testing identifies critical parameters that must be strictly controlled and should be performed during method development before formal validation."},
+
+{id:60,cat:"Spectroscopy",sub:"Atomic Absorption Spectroscopy",difficulty:"medium",
+ q:"Ionisation interference in AAS can be suppressed by adding:",
+ options:["A releasing agent (e.g., La³⁺)","A large excess of an easily ionisable element (ionisation suppressor, e.g., KCl)","An oxidising flame","A higher blank concentration"],
+ a:1, explain:"<strong>Ionisation suppressors</strong> (e.g., KCl, CsCl, LaCl₃) are added to both samples and standards. The ionisation suppressor itself ionises readily in the flame, providing a large excess of electrons that suppress the ionisation of the analyte (Le Chatelier's principle: M ⇌ M⁺ + e⁻ is pushed left). This keeps the analyte as neutral ground-state atoms, maximising absorbance."},
+
+{id:61,cat:"Fundamentals",sub:"Accuracy & Precision",difficulty:"hard",
+ q:"The t-test in analytical chemistry is used to determine:",
+ options:["Whether a data point is an outlier","Whether two means are statistically significantly different at a chosen confidence level","Whether the data follows a normal distribution","Whether two variances are equal"],
+ a:1, explain:"The <strong>Student t-test</strong> compares two means to determine if the difference is <strong>statistically significant</strong> (beyond what random error alone would explain) at a specified confidence level (e.g., 95%). It accounts for the sample size and standard deviation. The F-test compares variances; the Q-test tests for outliers."},
+
+{id:62,cat:"Classical Methods",sub:"Gravimetric Analysis",difficulty:"medium",
+ q:"The gravimetric factor (GF) for converting the mass of BaSO₄ precipitate to mass of SO₄²⁻ is:",
+ options:["M(BaSO₄)/M(SO₄²⁻)","M(SO₄²⁻)/M(BaSO₄)","M(Ba)/M(S)","2×M(S)/M(BaSO₄)"],
+ a:1, explain:"The <strong>gravimetric factor</strong> converts precipitate mass to analyte mass: GF = <strong>M(SO₄²⁻) / M(BaSO₄)</strong> = 96.06/233.39 = 0.4116. Mass(SO₄²⁻) = mass(BaSO₄) × GF. The stoichiometry must be included when the mole ratio of analyte to precipitate is not 1:1."},
+
+{id:63,cat:"Electroanalytical Methods",sub:"Voltammetry",difficulty:"hard",
+ q:"In anodic stripping voltammetry (ASV), the preconcentration step involves:",
+ options:["Evaporating the sample solution","Electrodepositing the analyte metal onto the working electrode at a negative potential","Adding a reducing agent to the sample","Filtering the sample through an ion exchange resin"],
+ a:1, explain:"<strong>ASV</strong> has two steps: (1) <strong>Preconcentration (deposition)</strong>: the analyte metal ion is reduced and deposited onto the working electrode (e.g., Hg or glassy carbon) by holding at a sufficiently negative potential for a fixed time — this concentrates the analyte. (2) <strong>Stripping</strong>: the potential is swept anodically, oxidising the deposited metal back into solution, producing a current peak proportional to concentration. ASV can detect trace metals at ppb–ppt levels."},
+
+{id:64,cat:"Separation Techniques",sub:"Chromatography",difficulty:"hard",
+ q:"The selectivity factor α in chromatography is defined as:",
+ options:["α = tR2/tR1","α = k2/k1 (ratio of capacity factors of two adjacent peaks)","α = N × Rs","α = H/L"],
+ a:1, explain:"<strong>Selectivity factor α = k₂/k₁</strong> (where k = capacity factor = (tR−tM)/tM and component 2 elutes after component 1, so α ≥ 1). α describes the <strong>thermodynamic separation</strong> — it reflects the difference in interaction of the two analytes with the stationary phase. α = 1 means the column cannot separate them; α > 1.1 is generally needed for practical separations."},
+
+{id:65,cat:"Advanced",sub:"Sampling Techniques",difficulty:"hard",
+ q:"The nugget effect in geostatistical sampling refers to:",
+ options:["The sampling of gold nuggets specifically","Variability at distances smaller than the minimum sampling interval — small-scale variability that cannot be removed by geostatistical modelling","The systematic bias from using a scoop sampler","The effect of large particle size on sampling error (Pierre Gy's theory)"],
+ a:3, explain:"Pierre Gy's sampling theory quantifies the <strong>Fundamental Sampling Error (FSE)</strong>, which depends on particle size, liberation factor, and analyte grade. The <strong>nugget effect</strong> refers to microscale heterogeneity that appears as variability even between samples taken at the same location — it represents the minimum irreducible variance in the variogram and is particularly important in precious metal sampling."},
+
+{id:66,cat:"Spectroscopy",sub:"Infrared Spectroscopy",difficulty:"hard",
+ q:"In FTIR spectroscopy, the Michelson interferometer produces an interferogram that contains:",
+ options:["A direct absorbance spectrum","All frequency information simultaneously as a time-domain signal, converted to a spectrum via Fourier transform","Only the fingerprint region","A single wavelength at a time"],
+ a:1, explain:"The <strong>FTIR interferometer</strong> modulates all IR frequencies simultaneously using a moving mirror. The detector records the <strong>interferogram</strong> — the combined intensity variation over time (mirror position). A <strong>Fourier transform</strong> mathematically converts this time-domain signal into a conventional frequency-domain IR spectrum. This 'Fellgett advantage' (multiplex advantage) gives FTIR superior signal-to-noise over dispersive instruments."},
+
+{id:67,cat:"Classical Methods",sub:"Complexometric Titrations",difficulty:"hard",
+ q:"In a complexometric back-titration of Al³⁺ with EDTA: excess EDTA is added to Al³⁺, then the excess is titrated with Zn²⁺ using EBT indicator. Why is a direct EDTA titration of Al³⁺ problematic?",
+ options:["Al³⁺ doesn't form a complex with EDTA","The AlY⁻ complex forms slowly (kinetic barrier) and EBT indicator is blocked by Al³⁺","EDTA precipitates with Al³⁺","The endpoint pH is incompatible with EBT"],
+ a:1, explain:"Al³⁺ presents two problems for direct titration: (1) <strong>Slow complexation kinetics</strong> — AlY⁻ forms slowly, making endpoint detection unreliable. (2) <strong>Indicator blocking</strong> — Al³⁺ binds EBT so strongly that EDTA cannot displace it, giving no colour change. The back-titration solves both: excess EDTA reacts completely with Al³⁺ (heated to accelerate), and the uncomplexed EDTA is then titrated with Zn²⁺."},
+
+{id:68,cat:"Electroanalytical Methods",sub:"Conductometry",difficulty:"hard",
+ q:"In a conductometric acid-base titration of HCl with NaOH, the conductance initially decreases then increases. This is because:",
+ options:["NaOH decomposes above a certain concentration","H⁺ (high mobility) is replaced by Na⁺ (lower mobility), decreasing conductance; after equivalence, excess OH⁻ (high mobility) increases it","The solution becomes more viscous","NaCl precipitates, reducing ion concentration"],
+ a:1, explain:"H⁺ has an anomalously high equivalent conductance (λ₀(H⁺) = 350 S·cm²·mol⁻¹) due to the Grotthuss (proton-hopping) mechanism. As NaOH is added: <strong>H⁺ is replaced by Na⁺ (λ₀ = 50)</strong>, causing conductance to drop. At equivalence: minimum conductance (NaCl solution). Beyond equivalence: excess <strong>OH⁻ (λ₀ = 198)</strong> causes conductance to rise steeply."},
+
+{id:69,cat:"Separation Techniques",sub:"Gas Chromatography",difficulty:"hard",
+ q:"The Kovats Retention Index (I) in GC standardises retention data relative to:",
+ options:["The retention time of the solvent","A series of n-alkanes, assigning I = 100n for the alkane with n carbons","The boiling points of analytes","The column temperature program"],
+ a:1, explain:"The <strong>Kovats Index (I)</strong> is calculated by interpolation between the retention of <strong>flanking n-alkanes</strong>: I = 100[n + (log tR(x) − log tR(n))/(log tR(n+1) − log tR(n))]. n-Alkanes are assigned I = 100 × (number of carbons): e.g., hexane I=600, heptane I=700. The Kovats Index is more reproducible than absolute retention times and allows cross-laboratory comparison of GC data."},
+
+{id:70,cat:"Advanced",sub:"Instrumental Analysis",difficulty:"medium",
+ q:"X-ray fluorescence (XRF) spectroscopy is particularly useful for:",
+ options:["Determining organic functional groups","Simultaneous multi-element analysis of major and minor elements in solid or liquid samples without digestion","Measuring dissolved oxygen","Determining molecular weight of polymers"],
+ a:1, explain:"<strong>XRF</strong> bombards a sample with X-rays, causing inner-shell electrons to be ejected. Outer electrons fill the vacancies, emitting characteristic X-rays at element-specific energies. XRF allows <strong>simultaneous multi-element analysis</strong> of solid, liquid, or powdered samples with minimal preparation, making it ideal for geological, metallurgical, and environmental applications."},
+
+{id:71,cat:"Fundamentals",sub:"Significant Figures",difficulty:"easy",
+ q:"How many significant figures does 1.00700 × 10³ contain?",
+ options:["4","6","7","3"],
+ a:1, explain:"<strong>1.00700 × 10³</strong> contains <strong>6 significant figures</strong>: 1, 0, 0, 7, 0, 0. All digits in scientific notation (the coefficient) are significant, including trailing zeros after a decimal point. The exponential part (×10³) does not affect the significant figure count."},
+
+{id:72,cat:"Classical Methods",sub:"Volumetric Analysis",difficulty:"hard",
+ q:"Which of the following is NOT a requirement for a primary standard?",
+ options:["High purity (≥99.9%)","High molar mass (to reduce weighing error)","Must be liquid at room temperature","Stable indefinitely in air without special storage"],
+ a:2, explain:"Primary standards must be: (1) high purity, (2) stable (not hygroscopic, not volatile, not reactive with air), (3) high molar mass (reduces relative weighing error), (4) available commercially in pure form, and (5) react stoichiometrically. Being <strong>liquid at room temperature</strong> is not a requirement — most primary standards are solids (Na₂CO₃, KHP, K₂Cr₂O₇)."},
+
+{id:73,cat:"Spectroscopy",sub:"Atomic Emission Spectroscopy",difficulty:"hard",
+ q:"In ICP-OES, internal standards are used to correct for:",
+ options:["Spectral overlaps between elements","Short-term and long-term signal drift due to matrix effects and instrument instability","Incorrect wavelength selection","Sample preparation errors"],
+ a:1, explain:"An <strong>internal standard</strong> (e.g., Y, In, or Sc for ICP-OES) is added at a constant known concentration to all samples and standards. Any <strong>signal variation due to matrix effects, plasma instability, or nebuliser clogging</strong> affects both the analyte and internal standard signals equally. The analyte/IS signal ratio corrects for these effects, improving precision and accuracy."},
+
+{id:74,cat:"Advanced",sub:"Quality Control",difficulty:"hard",
+ q:"In analytical quality control, a Z-score (laboratory performance score) of +2.5 in a proficiency test indicates:",
+ options:["Excellent performance, no action needed","The result is 2.5 standard deviations above the assigned value — satisfactory but approaching warning","The result is completely wrong","Insufficient measurements"],
+ a:1, explain:"Z-score = (lab result − assigned value)/σ_PT. |Z| ≤ 2: <strong>satisfactory</strong>. 2 < |Z| ≤ 3: <strong>questionable/warning</strong> (investigate potential bias). |Z| > 3: <strong>unsatisfactory/action required</strong>. A Z-score of +2.5 is within the warning zone — satisfactory but the positive bias warrants investigation of possible systematic errors."},
+
+{id:75,cat:"Separation Techniques",sub:"Thin Layer Chromatography",difficulty:"hard",
+ q:"Two compounds A (Rf=0.30) and B (Rf=0.45) on TLC. The separation factor α is:",
+ options:["0.667","1.500","0.150","1.125"],
+ a:1, explain:"In TLC, separation factor α = Rf(B)/Rf(A) where B has the higher Rf: α = 0.45/0.30 = <strong>1.500</strong>. Alternatively, using retardation factors as capacity-like quantities: k = (1-Rf)/Rf. kA = 0.70/0.30 = 2.333; kB = 0.55/0.45 = 1.222. α = kA/kB = 1.909. The exact definition depends on context — the Rf ratio is the simpler TLC-specific formula."},
+
+];
+
+/* ═══════════════════════════════════════════════════════════════
+   CATEGORIES METADATA
+═══════════════════════════════════════════════════════════════ */
+const CATEGORIES = [
+  {
+    id:"fundamentals", name:"Fundamentals", icon:"⚗️",
+    color:"teal", fillClass:"fill-teal", iconBg:"cat-icon-teal",
+    subtopics:["Introduction to Analytical Chemistry","Measurement & Errors","Significant Figures","Accuracy & Precision"],
+    desc:"Core principles, measurement theory, and data treatment"
+  },
+  {
+    id:"classical", name:"Classical Methods", icon:"🧪",
+    color:"cobalt", fillClass:"fill-cobalt", iconBg:"cat-icon-cobalt",
+    subtopics:["Gravimetric Analysis","Volumetric Analysis","Acid-Base Titrations","Redox Titrations","Complexometric Titrations"],
+    desc:"Wet chemistry, titrations, and classical quantitative methods"
+  },
+  {
+    id:"spectroscopy", name:"Spectroscopy", icon:"🔬",
+    color:"violet", fillClass:"fill-violet", iconBg:"cat-icon-violet",
+    subtopics:["UV-Visible Spectroscopy","Infrared Spectroscopy","Atomic Absorption Spectroscopy","Atomic Emission Spectroscopy"],
+    desc:"Interaction of electromagnetic radiation with matter"
+  },
+  {
+    id:"electro", name:"Electroanalytical Methods", icon:"⚡",
+    color:"emerald", fillClass:"fill-emerald", iconBg:"cat-icon-emerald",
+    subtopics:["Potentiometry","Conductometry","Voltammetry","Electrochemical Cells"],
+    desc:"Electrical measurements and electrochemical techniques"
+  },
+  {
+    id:"separation", name:"Separation Techniques", icon:"🌀",
+    color:"amber", fillClass:"fill-amber", iconBg:"cat-icon-amber",
+    subtopics:["Chromatography","HPLC","Gas Chromatography","Thin Layer Chromatography"],
+    desc:"Separation and identification of mixture components"
+  },
+  {
+    id:"advanced", name:"Advanced Analytical Chem", icon:"🏆",
+    color:"rose", fillClass:"fill-rose", iconBg:"cat-icon-rose",
+    subtopics:["Method Validation","Quality Control","Sampling Techniques","Instrumental Analysis"],
+    desc:"Method validation, QC, and advanced instrumental techniques"
+  }
+];
+
+const ACHIEVEMENTS_DEF = [
+  {id:"first_quiz",  icon:"🎓", name:"First Quiz",          condition:s => s.quizzes >= 1},
+  {id:"club80",      icon:"🥈", name:"80% Club",            condition:s => s.best >= 80},
+  {id:"master90",    icon:"🥇", name:"90% Master",          condition:s => s.best >= 90},
+  {id:"legend100",   icon:"💎", name:"100% Legend",         condition:s => s.best >= 100},
+  {id:"streak7",     icon:"🔥", name:"7-Day Streak",        condition:s => s.streak >= 7},
+  {id:"spec_expert", icon:"🔭", name:"Spectroscopy Expert", condition:s => s.catBest?.spectroscopy >= 85},
+  {id:"chrom_champ", icon:"🌀", name:"Chrom Champion",      condition:s => s.catBest?.separation >= 85},
+  {id:"guru",        icon:"🧬", name:"AnalChem Guru",       condition:s => s.quizzes >= 20 && s.avg >= 75},
+];
+
+const QUOTES = [
+  '"Measure twice, titrate once."',
+  '"In science, accuracy matters more than speed."',
+  '"Every measurement has uncertainty — embrace it."',
+  '"The blank is not just a formality."',
+  '"Precision is the hallmark of the analytical mind."',
+  '"Beer-Lambert Law: simple, elegant, powerful."',
+  '"Good calibration is the foundation of good data."',
+];
+
+const FAIL_MEMES = [
+  "Funny because your exam is soon 😅",
+  "The burette was not the problem.",
+  "Your calculator wants a rematch.",
+  "Let's pretend this was a practice run.",
+  "Even the blank solution scored higher.",
+  "Your analytical error is off the charts. Literally.",
+  "The standard deviation of your luck is too high.",
+  "Not you choosing the wrong option again 😭",
+];
+
+const HIGH_MEMES = [
+  "Solid chemistry instincts 🔥 — but can you repeat it?",
+  "You cooked. But did you really, or did you get lucky?",
+  "80%+: respect. Now aim for the calibration curve top.",
+  "The standard was set high and you met it. Almost.",
+  "Retry? Let's see if it wasn't luck.",
+];
+
+/* ═══════════════════════════════════════════════════════════════
+   STORAGE
+═══════════════════════════════════════════════════════════════ */
+const Store = {
+  KEY: "acm_v2",
+  get() {
+    try { return JSON.parse(localStorage.getItem(this.KEY)) || this.defaults(); }
+    catch { return this.defaults(); }
+  },
+  save(d) { try { localStorage.setItem(this.KEY, JSON.stringify(d)); } catch {} },
+  defaults() {
+    return { quizzes:0, scores:[], best:0, avg:0, streak:0, lastDate:null, badges:[], catBest:{}, usedQIds:[] };
+  }
+};
+
+/* ═══════════════════════════════════════════════════════════════
+   AUDIO
+═══════════════════════════════════════════════════════════════ */
+const Audio = {
+  enabled: false,
+  ctx: null,
+  init() { try { this.ctx = new (window.AudioContext || window.webkitAudioContext)(); } catch {} },
+  play(type) {
+    if (!this.enabled || !this.ctx) return;
+    const o = this.ctx.createOscillator();
+    const g = this.ctx.createGain();
+    o.connect(g); g.connect(this.ctx.destination);
+    if (type === "correct") { o.frequency.value = 880; g.gain.setValueAtTime(0.1, this.ctx.currentTime); g.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.3); }
+    if (type === "wrong")   { o.frequency.value = 200; g.gain.setValueAtTime(0.1, this.ctx.currentTime); g.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.3); }
+    if (type === "complete"){ o.frequency.setValueAtTime(440, this.ctx.currentTime); o.frequency.exponentialRampToValueAtTime(880, this.ctx.currentTime + 0.4); g.gain.setValueAtTime(0.15, this.ctx.currentTime); g.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.6); }
+    o.start(); o.stop(this.ctx.currentTime + 0.6);
+  }
+};
+
+/* ═══════════════════════════════════════════════════════════════
+   APP CONTROLLER
+═══════════════════════════════════════════════════════════════ */
+const App = {
+  currentCat: null,
+  selectedSubs: [],
+  selectedDiff: "all",
+  qCount: 10,
+  quizQuestions: [],
+  qIndex: 0,
+  correctCount: 0,
+  wrongCount: 0,
+  history: [],
+  lastRetryConfig: null,
+
+  /* ── INIT ── */
+  init() {
+    this.renderCategoryGrids();
+    this.renderAchievements();
+    this.updateStats();
+    this.setupSearch();
+    this.setupDiffButtons();
+    this.setupQCountSlider();
+    this.setupSoundToggle();
+    this.updateDailyChallenge();
+    document.getElementById("select-back-btn").addEventListener("click", () => this.showScreen("screen-categories"));
+    document.getElementById("start-quiz-btn").addEventListener("click", () => this.beginQuiz());
+  },
+
+  showScreen(id) {
+    document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+    document.getElementById(id).classList.add("active");
+    window.scrollTo({top:0, behavior:"smooth"});
+  },
+
+  /* ── CATEGORY GRIDS ── */
+  renderCategoryGrids() {
+    const grids = ["categories-grid", "categories-grid-full"];
+    grids.forEach(gridId => {
+      const g = document.getElementById(gridId);
+      if (!g) return;
+      g.innerHTML = "";
+      CATEGORIES.forEach(cat => {
+        const qCount = QUESTION_BANK.filter(q => q.cat === cat.name || this.getCatName(q.cat) === cat.id).length;
+        const card = document.createElement("div");
+        card.className = "category-card";
+        card.innerHTML = `
+          <div class="cat-icon-wrap ${cat.iconBg}">${cat.icon}</div>
+          <div class="cat-name">${cat.name}</div>
+          <div class="cat-count">${cat.subtopics.length} subtopics · ${QUESTION_BANK.filter(q=>q.cat===cat.name).length} questions</div>
+          <div class="cat-topics">${cat.subtopics.slice(0,3).map(s=>`<span class="cat-topic-pill">${s}</span>`).join("")}${cat.subtopics.length > 3 ? `<span class="cat-topic-pill">+${cat.subtopics.length-3}</span>` : ""}</div>
+          <div class="cat-progress-bar"><div class="cat-progress-fill ${cat.fillClass}" style="width:${Math.random()*60+10}%"></div></div>
+        `;
+        card.addEventListener("click", () => this.openCategorySelect(cat));
+        g.appendChild(card);
+      });
+    });
+  },
+
+  getCatName(catStr) {
+    const map = { "Fundamentals":"fundamentals","Classical Methods":"classical","Spectroscopy":"spectroscopy",
+                  "Electroanalytical Methods":"electro","Separation Techniques":"separation","Advanced":"advanced" };
+    return map[catStr] || catStr.toLowerCase();
+  },
+
+  /* ── CATEGORY SELECT ── */
+  openCategorySelect(cat) {
+    this.currentCat = cat;
+    this.selectedSubs = [...cat.subtopics];
+    document.getElementById("select-cat-title").textContent = cat.name;
+    document.getElementById("select-cat-sub").textContent = cat.desc;
+
+    const grid = document.getElementById("subtopic-grid");
+    grid.innerHTML = "";
+    cat.subtopics.forEach(sub => {
+      const qCount = QUESTION_BANK.filter(q => q.sub === sub).length;
+      const card = document.createElement("div");
+      card.className = "subtopic-card selected";
+      card.dataset.sub = sub;
+      card.innerHTML = `
+        <div class="subtopic-check"><div class="subtopic-check-inner"></div></div>
+        <div>
+          <div class="subtopic-name">${sub}</div>
+          <div class="subtopic-count">${qCount} questions</div>
+        </div>
+      `;
+      card.addEventListener("click", () => this.toggleSubtopic(card, sub));
+      grid.appendChild(card);
+    });
+
+    this.showScreen("screen-quiz-select");
+  },
+
+  toggleSubtopic(card, sub) {
+    if (this.selectedSubs.includes(sub)) {
+      if (this.selectedSubs.length === 1) return;
+      this.selectedSubs = this.selectedSubs.filter(s => s !== sub);
+      card.classList.remove("selected");
+    } else {
+      this.selectedSubs.push(sub);
+      card.classList.add("selected");
+    }
+  },
+
+  /* ── DIFFICULTY ── */
+  setupDiffButtons() {
+    document.querySelectorAll(".diff-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".diff-btn").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        this.selectedDiff = btn.dataset.diff;
+      });
+    });
+  },
+
+  /* ── Q COUNT ── */
+  setupQCountSlider() {
+    const slider = document.getElementById("qcount-slider");
+    const val = document.getElementById("qcount-val");
+    slider.addEventListener("input", () => { this.qCount = +slider.value; val.textContent = this.qCount; });
+  },
+
+  /* ── SOUND ── */
+  setupSoundToggle() {
+    const btn = document.getElementById("sound-toggle");
+    btn.addEventListener("click", () => {
+      Audio.enabled = !Audio.enabled;
+      if (Audio.enabled && !Audio.ctx) Audio.init();
+      btn.classList.toggle("active", Audio.enabled);
+      document.getElementById("sound-icon-on").style.display = Audio.enabled ? "block" : "none";
+      document.getElementById("sound-icon-off").style.display = Audio.enabled ? "none" : "block";
+    });
+  },
+
+  /* ── SEARCH ── */
+  setupSearch() {
+    const input = document.getElementById("search-input");
+    const dropdown = document.getElementById("search-dropdown");
+    input.addEventListener("input", () => {
+      const q = input.value.toLowerCase().trim();
+      if (!q) { dropdown.classList.remove("open"); return; }
+      const results = CATEGORIES.filter(c => c.name.toLowerCase().includes(q) || c.subtopics.some(s=>s.toLowerCase().includes(q)));
+      const subResults = [];
+      CATEGORIES.forEach(c => c.subtopics.filter(s=>s.toLowerCase().includes(q)).forEach(s => subResults.push({cat:c, sub:s})));
+      dropdown.innerHTML = "";
+      if (results.length === 0 && subResults.length === 0) {
+        dropdown.innerHTML = `<div class="empty-state" style="padding:16px;"><div class="empty-state-icon">🔍</div><div class="empty-state-text">No topics found</div></div>`;
+      } else {
+        [...results.slice(0,3)].forEach(c => {
+          const item = document.createElement("div");
+          item.className = "search-result-item";
+          item.innerHTML = `<div class="search-ri-icon">${c.icon}</div><div><div class="search-ri-name">${c.name}</div><div class="search-ri-cat">Category · ${c.subtopics.length} subtopics</div></div>`;
+          item.addEventListener("click", () => { dropdown.classList.remove("open"); input.value = ""; this.openCategorySelect(c); });
+          dropdown.appendChild(item);
+        });
+        [...subResults.slice(0,4)].forEach(({cat, sub}) => {
+          const item = document.createElement("div");
+          item.className = "search-result-item";
+          item.innerHTML = `<div class="search-ri-icon">📌</div><div><div class="search-ri-name">${sub}</div><div class="search-ri-cat">${cat.name}</div></div>`;
+          item.addEventListener("click", () => { dropdown.classList.remove("open"); input.value = ""; this.openCategorySelect(cat); });
+          dropdown.appendChild(item);
+        });
+      }
+      dropdown.classList.add("open");
+    });
+    document.addEventListener("click", e => { if (!e.target.closest(".nav-center")) dropdown.classList.remove("open"); });
+  },
+
+  /* ── STATS ── */
+  updateStats() {
+    const d = Store.get();
+    document.getElementById("stat-quizzes").textContent = d.quizzes;
+    document.getElementById("stat-avg").textContent = d.quizzes > 0 ? d.avg.toFixed(0) + "%" : "—";
+    document.getElementById("stat-best").textContent = d.quizzes > 0 ? d.best + "%" : "—";
+    document.getElementById("stat-streak").textContent = d.streak;
+  },
+
+  /* ── ACHIEVEMENTS ── */
+  renderAchievements() {
+    const d = Store.get();
+    const grid = document.getElementById("achievements-grid");
+    grid.innerHTML = "";
+    ACHIEVEMENTS_DEF.forEach(ach => {
+      const earned = d.badges.includes(ach.id);
+      const chip = document.createElement("div");
+      chip.className = `achievement-chip ${earned ? "earned" : "locked"}`;
+      chip.innerHTML = `<span class="ach-icon">${ach.icon}</span><span class="ach-name ${earned ? "gold" : ""}">${ach.name}</span>`;
+      chip.title = earned ? "Earned!" : "Locked";
+      grid.appendChild(chip);
+    });
+  },
+
+  /* ── DAILY CHALLENGE ── */
+  updateDailyChallenge() {
+    const topics = ["Beer-Lambert Law & UV-Vis", "Acid-Base Titration Curves", "Chromatographic Resolution", "Nernst Equation Applications", "Gravimetric Calculations", "Standard Addition Method"];
+    const idx = new Date().getDate() % topics.length;
+    document.getElementById("daily-topic").textContent = "Today's Focus: " + topics[idx];
+  },
+
+  startDailyChallenge() {
+    const dailyCat = CATEGORIES[Math.floor(Math.random() * CATEGORIES.length)];
+    this.currentCat = dailyCat;
+    this.selectedSubs = [...dailyCat.subtopics];
+    this.selectedDiff = "all";
+    this.qCount = 10;
+    this.beginQuiz();
+  },
+
+  startRandomQuiz() {
+    this.currentCat = null;
+    this.selectedSubs = QUESTION_BANK.map(q => q.sub);
+    this.selectedDiff = "all";
+    this.qCount = 10;
+    this.beginQuiz();
+  },
+
+  /* ── BUILD QUIZ ── */
+  beginQuiz() {
+    let pool = QUESTION_BANK.filter(q => this.selectedSubs.includes(q.sub));
+    if (this.selectedDiff !== "all") pool = pool.filter(q => q.difficulty === this.selectedDiff);
+    if (pool.length === 0) { alert("No questions found for this selection. Try changing difficulty or subtopics."); return; }
+    pool = [...pool].sort(() => Math.random() - 0.5);
+    this.quizQuestions = pool.slice(0, Math.min(this.qCount, pool.length));
+    this.qIndex = 0; this.correctCount = 0; this.wrongCount = 0; this.history = [];
+    this.lastRetryConfig = { subs: [...this.selectedSubs], diff: this.selectedDiff, qs: [...this.quizQuestions] };
+    this.showScreen("screen-quiz");
+    this.renderQuestion();
+  },
+
+  /* ── RENDER QUESTION ── */
+  renderQuestion() {
+    const q = this.quizQuestions[this.qIndex];
+    const total = this.quizQuestions.length;
+    const pct = (this.qIndex / total) * 100;
+
+    document.getElementById("q-num-badge").textContent = `Q ${this.qIndex+1} / ${total}`;
+    document.getElementById("q-topic-badge").textContent = q.sub;
+    document.getElementById("q-diff-tag").textContent = q.difficulty.charAt(0).toUpperCase() + q.difficulty.slice(1);
+    document.getElementById("q-diff-tag").className = `q-diff-tag ${q.difficulty}`;
+    document.getElementById("q-text-main").textContent = q.q;
+    document.getElementById("quiz-progress-fill").style.width = pct + "%";
+    document.getElementById("prog-correct").textContent = `✓ ${this.correctCount} correct`;
+    document.getElementById("prog-remain").textContent = `${total - this.qIndex} remaining`;
+
+    const letters = ["A","B","C","D","E"];
+    const list = document.getElementById("options-list");
+    list.innerHTML = "";
+    q.options.forEach((opt, i) => {
+      const btn = document.createElement("button");
+      btn.className = "option-btn";
+      btn.innerHTML = `<span class="option-letter">${letters[i]}</span><span>${opt}</span>`;
+      btn.addEventListener("click", () => this.selectAnswer(i));
+      list.appendChild(btn);
+    });
+
+    document.getElementById("feedback-panel").className = "feedback-panel";
+    document.getElementById("btn-next").style.display = "none";
+    document.getElementById("meme-strip").className = "meme-strip";
+  },
+
+  /* ── ANSWER SELECTION ── */
+  selectAnswer(chosen) {
+    const q = this.quizQuestions[this.qIndex];
+    const isCorrect = chosen === q.a;
+    const btns = document.querySelectorAll(".option-btn");
+    btns.forEach(b => b.classList.add("disabled"));
+
+    if (isCorrect) { btns[chosen].classList.add("correct"); this.correctCount++; Audio.play("correct"); }
+    else { btns[chosen].classList.add("wrong"); btns[q.a].classList.add("reveal"); Audio.play("wrong"); }
+
+    this.history.push({ q, correct: isCorrect });
+
+    // Feedback
+    const panel = document.getElementById("feedback-panel");
+    panel.className = `feedback-panel show ${isCorrect ? "correct" : "wrong"}`;
+    document.getElementById("fb-icon").textContent = isCorrect ? "✓" : "✗";
+    document.getElementById("fb-title").textContent = isCorrect ? "Correct!" : `Incorrect — correct answer: ${["A","B","C","D"][q.a]}`;
+    document.getElementById("fb-explanation").innerHTML = q.explain;
+
+    const meme = document.getElementById("meme-strip");
+    if (!isCorrect) {
+      meme.textContent = FAIL_MEMES[Math.floor(Math.random() * FAIL_MEMES.length)];
+      meme.classList.add("show");
+    }
+
+    document.getElementById("prog-correct").textContent = `✓ ${this.correctCount} correct`;
+    document.getElementById("btn-next").style.display = "inline-flex";
+  },
+
+  /* ── NEXT QUESTION ── */
+  nextQuestion() {
+    this.qIndex++;
+    if (this.qIndex >= this.quizQuestions.length) this.finishQuiz();
+    else this.renderQuestion();
+  },
+
+  /* ── FINISH ── */
+  finishQuiz() {
+    Audio.play("complete");
+    const total = this.quizQuestions.length;
+    const pct = Math.round((this.correctCount / total) * 100);
+    const d = Store.get();
+
+    // Update storage
+    d.quizzes++;
+    d.scores.push(pct);
+    d.best = Math.max(d.best, pct);
+    d.avg = Math.round(d.scores.reduce((a,b)=>a+b,0) / d.scores.length);
+    if (this.currentCat) {
+      const catKey = this.currentCat.id;
+      d.catBest[catKey] = Math.max(d.catBest[catKey] || 0, pct);
+    }
+    // Streak
+    const today = new Date().toDateString();
+    if (d.lastDate !== today) { d.streak = (d.lastDate === new Date(Date.now()-86400000).toDateString()) ? d.streak+1 : 1; d.lastDate = today; }
+
+    // Badges
+    const prevBadges = [...d.badges];
+    ACHIEVEMENTS_DEF.forEach(ach => { if (!d.badges.includes(ach.id) && ach.condition(d)) d.badges.push(ach.id); });
+    const newBadges = ACHIEVEMENTS_DEF.filter(a => !prevBadges.includes(a.id) && d.badges.includes(a.id));
+    Store.save(d);
+
+    // Render results
+    this.showScreen("screen-results");
+    const arc = document.getElementById("score-arc");
+    setTimeout(() => { arc.style.strokeDashoffset = 427.3 * (1 - pct/100); }, 150);
+    let count = 0;
+    const pctEl = document.getElementById("score-pct-num");
+    const t = setInterval(() => { count = Math.min(count+2, pct); pctEl.textContent = count; if (count >= pct) clearInterval(t); }, 20);
+
+    document.getElementById("score-rating").textContent = pct===100?"Perfect Score! 🏆":pct>=90?"Outstanding 🔥":pct>=80?"Great Work 💪":pct>=60?"Good Effort 📚":pct>=40?"Keep Studying 📖":"Back to Basics";
+    document.getElementById("score-meme-msg").textContent = pct>=80 ? HIGH_MEMES[Math.floor(Math.random()*HIGH_MEMES.length)] : pct<50 ? FAIL_MEMES[Math.floor(Math.random()*FAIL_MEMES.length)] : "Solid attempt — review your mistakes and retry.";
+
+    document.getElementById("res-correct").textContent = this.correctCount;
+    document.getElementById("res-wrong").textContent = this.wrongCount + (total - this.correctCount - this.wrongCount);
+    document.getElementById("res-total").textContent = total;
+
+    // New badges
+    const badgesWrap = document.getElementById("new-badges-wrap");
+    const badgesList = document.getElementById("new-badges-list");
+    if (newBadges.length > 0) {
+      badgesWrap.style.display = "block";
+      badgesList.innerHTML = newBadges.map((b,i) => `<span class="new-badge" style="animation-delay:${i*0.15}s"><span class="new-badge-icon">${b.icon}</span>${b.name}</span>`).join("");
+    } else { badgesWrap.style.display = "none"; }
+
+    // Strengths / improve
+    const topicStats = {};
+    this.history.forEach(h => {
+      if (!topicStats[h.q.sub]) topicStats[h.q.sub] = {c:0,t:0};
+      topicStats[h.q.sub].t++;
+      if (h.correct) topicStats[h.q.sub].c++;
+    });
+    const sorted = Object.entries(topicStats).map(([k,v])=>({topic:k, pct:Math.round(v.c/v.t*100)})).sort((a,b)=>b.pct-a.pct);
+    const strengths = sorted.filter(s=>s.pct>=70).slice(0,3);
+    const improve = sorted.filter(s=>s.pct<70).slice(0,3);
+    document.getElementById("strengths-list").innerHTML = strengths.length > 0 ? strengths.map(s=>`<div class="analysis-item"><div class="analysis-dot good"></div><span>${s.topic} (${s.pct}%)</span></div>`).join("") : `<div class="analysis-item"><div class="analysis-dot good"></div><span>Complete more quizzes to see strengths</span></div>`;
+    document.getElementById("improve-list").innerHTML = improve.length > 0 ? improve.map(s=>`<div class="analysis-item"><div class="analysis-dot bad"></div><span>${s.topic} (${s.pct}%)</span></div>`).join("") : `<div class="analysis-item" style="color:var(--emerald);"><span>✓ No major weaknesses detected!</span></div>`;
+
+    // Breakdown
+    document.getElementById("breakdown-list").innerHTML = this.history.map((h,i)=>`
+      <div class="breakdown-row">
+        <span class="breakdown-num">Q${i+1}</span>
+        <span class="breakdown-topic">${h.q.sub}</span>
+        <span class="breakdown-icon">${h.correct ? "✅" : "❌"}</span>
+      </div>
+    `).join("");
+
+    this.updateStats();
+    this.renderAchievements();
+  },
+
+  /* ── RETRY ── */
+  retryQuiz() {
+    if (!this.lastRetryConfig) { this.showScreen("screen-dashboard"); return; }
+    this.quizQuestions = [...this.lastRetryConfig.qs].sort(() => Math.random()-0.5);
+    this.qIndex = 0; this.correctCount = 0; this.wrongCount = 0; this.history = [];
+    this.showScreen("screen-quiz");
+    this.renderQuestion();
+  }
+};
+
+/* ═══════════════════════════════════════════════════════════════
+   LOADING SEQUENCE
+═══════════════════════════════════════════════════════════════ */
+(function runLoader() {
+  const fill = document.getElementById("loader-fill");
+  const pctEl = document.getElementById("loader-pct");
+  const quoteEl = document.getElementById("loader-quote");
+  let pct = 0;
+  let qi = 0;
+
+  function nextQuote() {
+    quoteEl.style.opacity = 0;
+    setTimeout(() => {
+      qi = (qi+1) % QUOTES.length;
+      quoteEl.textContent = QUOTES[qi];
+      quoteEl.style.opacity = 1;
+    }, 400);
+  }
+  const quoteInterval = setInterval(nextQuote, 1200);
+
+  const interval = setInterval(() => {
+    pct = Math.min(pct + Math.random()*8 + 2, 100);
+    fill.style.width = pct + "%";
+    pctEl.textContent = Math.round(pct) + "%";
+    if (pct >= 100) {
+      clearInterval(interval); clearInterval(quoteInterval);
+      setTimeout(() => {
+        document.getElementById("loading-screen").classList.add("hidden");
+        document.getElementById("app").classList.add("visible");
+        App.init();
+      }, 400);
+    }
+  }, 80);
+})();
+</script>
+</body>
+</html>
